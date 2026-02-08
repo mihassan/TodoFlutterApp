@@ -1,0 +1,30 @@
+# === OS ===
+.DS_Store
+Thumbs.db
+
+# === IDE ===
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# === Keystores & signing (NEVER commit) ===
+**/*.jks
+**/*.keystore
+**/key.properties
+
+# === Service accounts & secrets (NEVER commit) ===
+**/*serviceAccount*.json
+**/*service-account*.json
+.env
+.env.*
+
+# === Firebase emulator data (local-only) ===
+firebase/emulators/
+
+# === Dart/Flutter tooling ===
+.dart_tool/
+.pub-cache/
+.pub/
+build/

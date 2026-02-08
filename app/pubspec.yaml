@@ -1,0 +1,47 @@
+name: todo_flutter_app
+description: 'Offline-first Flutter Android todo app with Firebase backend.'
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management
+  flutter_riverpod: ^2.6.1
+
+  # Routing
+  go_router: ^14.8.1
+
+  # Models (annotations only — codegen in dev_dependencies)
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
+
+  # Local database
+  drift: ^2.25.0
+  drift_flutter: ^0.2.4
+
+  # UI
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # Linting
+  flutter_lints: ^5.0.0
+
+  # Code generation
+  build_runner: ^2.4.15
+  freezed: ^2.5.8
+  json_serializable: ^6.9.5
+  drift_dev: ^2.25.0
+
+  # Testing
+  mocktail: ^1.0.4
+
+flutter:
+  uses-material-design: true
