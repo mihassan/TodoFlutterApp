@@ -10,15 +10,15 @@
 
 ---
 
-## Phase 0: Project Scaffold + Tooling
+## Phase 0: Project Scaffold + Tooling ✅
 
-- [ ] 0.1 — Run `flutter create` in `app/` directory
-- [ ] 0.2 — Add `analysis_options.yaml` with `flutter_lints`, zero-warnings policy
-- [ ] 0.3 — Create `app/lib/` folder structure: `app/`, `features/`, `core/`, `domain/`, `data/`
-- [ ] 0.4 — Add core dependencies to `pubspec.yaml` (riverpod, go_router, freezed, drift, etc.)
-- [ ] 0.5 — Run `flutter pub get` and `flutter analyze` — verify clean
-- [ ] 0.6 — Create `.gitignore` (root + app-level) with security exclusions from AGENTS.md
-- [ ] 0.7 — Initialize git repo, initial commit
+- [x] 0.1 — Run `flutter create` in `app/` directory
+- [x] 0.2 — Add `analysis_options.yaml` with `flutter_lints`, zero-warnings policy
+- [x] 0.3 — Create `app/lib/` folder structure: `app/`, `features/`, `core/`, `domain/`, `data/`
+- [x] 0.4 — Add core dependencies to `pubspec.yaml` (riverpod, go_router, freezed, drift, etc.)
+- [x] 0.5 — Run `flutter pub get` and `flutter analyze` — verify clean
+- [x] 0.6 — Create `.gitignore` (root + app-level) with security exclusions from AGENTS.md
+- [x] 0.7 — Initialize git repo, initial commit
 
 ## Phase 1: UX/UI Foundation
 
@@ -143,5 +143,5 @@
 
 ## Status
 
-**Current phase:** 0 — Not started
+**Current phase:** 1 — UX/UI Foundation
 **Last updated:** 2026-02-09
