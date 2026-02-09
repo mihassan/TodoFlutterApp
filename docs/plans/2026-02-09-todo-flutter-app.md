@@ -34,16 +34,16 @@
 - [x] 2.3 — Write widget tests for routing (auth gate redirects)
 - [x] 2.4 — Commit
 
-## Phase 3: Domain Model + Use Cases
+## Phase 3: Domain Model + Use Cases ✅
 
-- [ ] 3.1 — Define `Task` entity with freezed (id, title, notes, completed, dueAt, priority, tags, listId, timestamps)
-- [ ] 3.2 — Define `TaskList` entity with freezed
-- [ ] 3.3 — Define `Attachment` entity with freezed
-- [ ] 3.4 — Define typed failure classes: `AuthFailure`, `NetworkFailure`, `StorageFailure`, `ValidationFailure`
-- [ ] 3.5 — Write use cases: create/update/complete task, filter/sort (Today/Upcoming/Completed)
-- [ ] 3.6 — Write unit tests for all entities and use cases
-- [ ] 3.7 — Run code generation (`build_runner`), verify tests pass
-- [ ] 3.8 — Commit
+- [x] 3.1 — Define `Task` entity with freezed (id, title, notes, completed, dueAt, priority, tags, listId, timestamps)
+- [x] 3.2 — Define `TaskList` entity with freezed
+- [x] 3.3 — Define `Attachment` entity with freezed
+- [x] 3.4 — Define typed failure classes: `AuthFailure`, `NetworkFailure`, `StorageFailure`, `ValidationFailure`
+- [x] 3.5 — Write use cases: create/update/complete task, filter/sort (Today/Upcoming/Completed)
+- [x] 3.6 — Write unit tests for all entities and use cases
+- [x] 3.7 — Run code generation (`build_runner`), verify tests pass
+- [x] 3.8 — Commit
 
 ## Phase 4: Data Layer — Repository Contracts
 
@@ -143,5 +143,5 @@
 
 ## Status
 
-**Current phase:** 3 — Domain Model + Use Cases
-**Last updated:** 2026-02-09
+**Current phase:** 4 — Data Layer — Repository Contracts
+**Last updated:** 2026-02-10
