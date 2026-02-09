@@ -20,12 +20,12 @@
 - [x] 0.6 — Create `.gitignore` (root + app-level) with security exclusions from AGENTS.md
 - [x] 0.7 — Initialize git repo, initial commit
 
-## Phase 1: UX/UI Foundation
+## Phase 1: UX/UI Foundation ✅
 
-- [ ] 1.1 — Define Material 3 theme: `ColorScheme`, typography scale, spacing tokens
-- [ ] 1.2 — Build reusable core widgets: buttons, text fields, error banner, empty state, loading skeleton
-- [ ] 1.3 — Write widget tests for core components
-- [ ] 1.4 — Commit
+- [x] 1.1 — Define Material 3 theme: `ColorScheme`, typography scale, spacing tokens
+- [x] 1.2 — Build reusable core widgets: buttons, text fields, error banner, empty state, loading skeleton
+- [x] 1.3 — Write widget tests for core components
+- [x] 1.4 — Commit
 
 ## Phase 2: Navigation + Screen Skeleton
 
@@ -143,5 +143,5 @@
 
 ## Status
 
-**Current phase:** 1 — UX/UI Foundation
+**Current phase:** 2 — Navigation + Screen Skeleton
 **Last updated:** 2026-02-09
