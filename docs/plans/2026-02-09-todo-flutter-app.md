@@ -27,12 +27,12 @@
 - [x] 1.3 — Write widget tests for core components
 - [x] 1.4 — Commit
 
-## Phase 2: Navigation + Screen Skeleton
+## Phase 2: Navigation + Screen Skeleton ✅
 
-- [ ] 2.1 — Set up go_router with shell route and auth guard (stubbed auth state)
-- [ ] 2.2 — Create placeholder screens: auth gate, task list, task detail, settings
-- [ ] 2.3 — Write widget tests for routing (auth gate redirects)
-- [ ] 2.4 — Commit
+- [x] 2.1 — Set up go_router with shell route and auth guard (stubbed auth state)
+- [x] 2.2 — Create placeholder screens: auth gate, task list, task detail, settings
+- [x] 2.3 — Write widget tests for routing (auth gate redirects)
+- [x] 2.4 — Commit
 
 ## Phase 3: Domain Model + Use Cases
 
@@ -143,5 +143,5 @@
 
 ## Status
 
-**Current phase:** 2 — Navigation + Screen Skeleton
+**Current phase:** 3 — Domain Model + Use Cases
 **Last updated:** 2026-02-09
