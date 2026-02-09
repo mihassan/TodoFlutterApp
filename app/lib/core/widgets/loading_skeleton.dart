@@ -21,8 +21,8 @@ class LoadingSkeleton extends StatelessWidget {
         padding: const EdgeInsets.all(AppSpacing.md),
         physics: const NeverScrollableScrollPhysics(),
         itemCount: itemCount,
-        separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.sm),
-        itemBuilder: (_, __) =>
+        separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
+        itemBuilder: (_, _) =>
             _SkeletonItem(color: colorScheme.surfaceContainerHighest),
       ),
     );
