@@ -7,6 +7,7 @@ import 'package:todo_flutter_app/app/providers/task_providers.dart';
 import 'package:todo_flutter_app/data/repositories/fake_task_repository.dart';
 import 'package:todo_flutter_app/data/services/connectivity_service.dart';
 import 'package:todo_flutter_app/data/repositories/fake_auth_repository.dart';
+import 'package:todo_flutter_app/domain/entities/task.dart';
 import 'package:todo_flutter_app/features/auth/providers/auth_provider.dart';
 
 /// Wraps [child] in a [MaterialApp] with the app's light theme.
@@ -61,6 +62,22 @@ List<Override> authenticatedOverrides() {
     ...fakeAuthOverrides(),
     isAuthenticatedProvider.overrideWith((_) => true),
     taskRepositoryProvider.overrideWithValue(FakeTaskRepository()),
+    connectivityServiceProvider.overrideWithValue(
+      _AlwaysConnectedConnectivityService(),
+    ),
+  ];
+}
+
+/// Provider overrides to simulate an authenticated state with initial tasks.
+///
+/// Useful for testing screens that display existing task data.
+List<Override> authenticatedOverridesWith({List<Task>? initialTasks}) {
+  return [
+    ...fakeAuthOverrides(),
+    isAuthenticatedProvider.overrideWith((_) => true),
+    taskRepositoryProvider.overrideWithValue(
+      FakeTaskRepository(tasks: initialTasks),
+    ),
     connectivityServiceProvider.overrideWithValue(
       _AlwaysConnectedConnectivityService(),
     ),

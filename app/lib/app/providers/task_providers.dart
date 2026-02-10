@@ -20,6 +20,7 @@ import 'package:todo_flutter_app/domain/use_cases/filter_tasks.dart'
 import 'package:todo_flutter_app/features/auth/providers/auth_provider.dart';
 import 'package:todo_flutter_app/features/tasks/controllers/sync_controller.dart';
 import 'package:todo_flutter_app/features/tasks/controllers/task_creation_controller.dart';
+import 'package:todo_flutter_app/features/tasks/controllers/task_edit_controller.dart';
 
 final appDatabaseProvider = Provider<AppDatabase>((ref) {
   final executor = LazyDatabase(() async {
@@ -124,4 +125,12 @@ final taskCreationControllerProvider =
       return TaskCreationController(
         repository: ref.watch(taskRepositoryProvider),
       );
+    });
+
+/// Provider for the task edit controller.
+///
+/// Manages state for task editing operations (loading, updating, deleting).
+final taskEditControllerProvider =
+    StateNotifierProvider<TaskEditController, TaskEditState>((ref) {
+      return TaskEditController(repository: ref.watch(taskRepositoryProvider));
     });

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:todo_flutter_app/app/providers/task_providers.dart';
+import 'package:todo_flutter_app/app/routes.dart';
 import 'package:todo_flutter_app/core/widgets/empty_state.dart';
 import 'package:todo_flutter_app/domain/use_cases/filter_tasks.dart';
 import 'package:todo_flutter_app/features/tasks/widgets/task_creation_sheet.dart';
@@ -158,13 +160,13 @@ class _ErrorState extends StatelessWidget {
 }
 
 /// Populated state widget showing the task list.
-class _PopulatedState extends StatelessWidget {
+class _PopulatedState extends ConsumerWidget {
   const _PopulatedState({required this.tasks});
 
   final List<dynamic> tasks;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return ListView.builder(
       itemCount: tasks.length,
       padding: const EdgeInsets.symmetric(vertical: 8),
@@ -179,11 +181,20 @@ class _PopulatedState extends StatelessWidget {
               trailing: Checkbox(
                 value: task.isCompleted,
                 onChanged: (value) {
-                  // TODO: Update task completion status
+                  if (value != null) {
+                    ref
+                        .read(taskEditControllerProvider.notifier)
+                        .loadTask(task.id)
+                        .then((_) {
+                          ref
+                              .read(taskEditControllerProvider.notifier)
+                              .updateTask(isCompleted: value);
+                        });
+                  }
                 },
               ),
               onTap: () {
-                // TODO: Navigate to task detail screen
+                context.push(AppRoutes.taskDetailPath(task.id));
               },
             ),
           ),

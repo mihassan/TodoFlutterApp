@@ -4,6 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:todo_flutter_app/app/router.dart';
 import 'package:todo_flutter_app/app/routes.dart';
+import 'package:todo_flutter_app/domain/entities/priority.dart';
+import 'package:todo_flutter_app/domain/entities/task.dart';
 
 import '../helpers/test_app.dart';
 
@@ -111,7 +113,19 @@ void main() {
     });
 
     testWidgets('navigating to task detail shows taskId', (tester) async {
-      final overrides = authenticatedOverrides();
+      // Create a task with the ID we'll navigate to
+      final task = Task(
+        id: 'abc-123',
+        title: 'Test Task',
+        notes: '',
+        isCompleted: false,
+        priority: Priority.medium,
+        dueAt: null,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+
+      final overrides = authenticatedOverridesWith(initialTasks: [task]);
       final container = ProviderContainer(overrides: overrides);
       final router = container.read(routerProvider);
 
@@ -124,8 +138,9 @@ void main() {
       router.go(AppRoutes.taskDetailPath('abc-123'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Task abc-123'), findsOneWidget);
-      expect(find.text('Detail view coming soon'), findsOneWidget);
+      // Verify we're on the task detail screen by checking for key elements
+      expect(find.text('Task Details'), findsOneWidget);
+      expect(find.text('Completed'), findsOneWidget);
 
       container.dispose();
     });
