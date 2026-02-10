@@ -84,6 +84,18 @@ class FakeAttachmentRepository implements AttachmentRepository {
   }
 
   @override
+  Future<StorageFailure?> retryUpload(String attachmentId) async {
+    final index = _attachments.indexWhere((a) => a.id == attachmentId);
+    if (index == -1) {
+      return const NotFound();
+    }
+    _attachments[index] = _attachments[index].copyWith(
+      status: AttachmentStatus.pending,
+    );
+    return null;
+  }
+
+  @override
   Future<NetworkFailure?> syncUploads() async {
     _isUploadingNotifier.startUploading();
     await Future.delayed(const Duration(milliseconds: 100));

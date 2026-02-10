@@ -68,6 +68,13 @@ abstract interface class AttachmentRepository {
   /// Automatically called by the app's main sync engine.
   Future<NetworkFailure?> syncUploads();
 
+  /// Retries a failed attachment upload.
+  ///
+  /// Marks the attachment as pending again and re-queues it for upload.
+  /// Used when the user taps "Retry" on a failed attachment.
+  /// Returns `null` on success, or a [StorageFailure] if not found or fails.
+  Future<StorageFailure?> retryUpload(String attachmentId);
+
   /// Returns the current upload sync status.
   ///
   /// Useful for displaying a "uploading..." indicator.

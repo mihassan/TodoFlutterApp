@@ -174,6 +174,31 @@ class AttachmentRepositoryImpl implements AttachmentRepository {
   }
 
   @override
+  Future<StorageFailure?> retryUpload(String attachmentId) async {
+    try {
+      final (attachment, error) = await getAttachmentById(attachmentId);
+      if (error != null) {
+        return error;
+      }
+
+      if (attachment == null) {
+        return const NotFound('Attachment not found.');
+      }
+
+      // Reset status to pending to trigger re-upload
+      final pending = attachment.copyWith(status: AttachmentStatus.pending);
+      final (_, updateError) = await updateAttachment(pending);
+      if (updateError != null) {
+        return updateError;
+      }
+
+      return null;
+    } catch (e) {
+      return DatabaseFailure(e.toString());
+    }
+  }
+
+  @override
   Future<NetworkFailure?> syncUploads() async {
     if (_isUploadingNow) {
       return null;
