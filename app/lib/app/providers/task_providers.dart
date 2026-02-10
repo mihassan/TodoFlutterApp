@@ -13,7 +13,10 @@ import 'package:todo_flutter_app/data/data_sources/local/local_task_data_source.
 import 'package:todo_flutter_app/data/data_sources/remote/firestore_task_data_source.dart';
 import 'package:todo_flutter_app/data/repositories/task_repository_impl.dart';
 import 'package:todo_flutter_app/data/services/connectivity_service.dart';
+import 'package:todo_flutter_app/domain/entities/task.dart';
 import 'package:todo_flutter_app/domain/repositories/task_repository.dart';
+import 'package:todo_flutter_app/domain/use_cases/filter_tasks.dart'
+    show FilterTasks, TaskFilter;
 import 'package:todo_flutter_app/features/auth/providers/auth_provider.dart';
 import 'package:todo_flutter_app/features/tasks/controllers/sync_controller.dart';
 
@@ -75,3 +78,39 @@ final syncControllerProvider =
       controller.start();
       return controller;
     });
+
+/// State provider for the current task filter.
+///
+/// Defaults to [TaskFilter.inbox] and persists across screens.
+final taskFilterProvider = StateProvider<TaskFilter>((ref) {
+  return TaskFilter.inbox;
+});
+
+/// Future provider that fetches all tasks for the authenticated user.
+///
+/// Reads from the local DB. Rebuilds whenever [taskRepositoryProvider] changes
+/// or when explicitly invalidated (e.g., after creating/updating a task).
+final allTasksProvider = FutureProvider<List<Task>>((ref) async {
+  final repository = ref.watch(taskRepositoryProvider);
+  final (tasks, failure) = await repository.getTasks();
+
+  if (failure != null) {
+    throw Exception(failure);
+  }
+
+  return tasks;
+});
+
+/// Filtered provider that returns tasks matching the current filter.
+///
+/// Combines [allTasksProvider] with [taskFilterProvider] to show
+/// Inbox, Today, Upcoming, or Completed tasks.
+final filteredTasksProvider = Provider<AsyncValue<List<Task>>>((ref) {
+  final allTasks = ref.watch(allTasksProvider);
+  final filter = ref.watch(taskFilterProvider);
+
+  return allTasks.whenData((tasks) {
+    const filterUseCase = FilterTasks();
+    return filterUseCase(tasks, filter);
+  });
+});
