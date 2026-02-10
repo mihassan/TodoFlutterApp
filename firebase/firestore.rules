@@ -2,9 +2,102 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // User-scoped data: only the owner can read/write
-    match /users/{userId}/{document=**} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+    // ── Helper functions ──────────────────────────────────
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    function isString(field) {
+      return field is string;
+    }
+
+    function isBool(field) {
+      return field is bool;
+    }
+
+    function isNumber(field) {
+      return field is number;
+    }
+
+    function isList(field) {
+      return field is list;
+    }
+
+    // ── User-scoped data ──────────────────────────────────
+
+    // User profile document (future use)
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow write: if isOwner(userId);
+
+      // ── Tasks ─────────────────────────────────────────
+      match /tasks/{taskId} {
+        allow read: if isOwner(userId);
+
+        allow create: if isOwner(userId)
+          && isString(request.resource.data.title)
+          && request.resource.data.title.size() >= 1
+          && request.resource.data.title.size() <= 500
+          && isString(request.resource.data.notes)
+          && isBool(request.resource.data.isCompleted)
+          && isString(request.resource.data.priority)
+          && request.resource.data.priority in ['none', 'low', 'medium', 'high']
+          && isList(request.resource.data.tags)
+          && request.resource.data.get('createdAt', null) is timestamp
+          && request.resource.data.get('updatedAt', null) is timestamp;
+
+        allow update: if isOwner(userId)
+          && isString(request.resource.data.title)
+          && request.resource.data.title.size() >= 1
+          && request.resource.data.title.size() <= 500
+          && isString(request.resource.data.notes)
+          && isBool(request.resource.data.isCompleted)
+          && isString(request.resource.data.priority)
+          && request.resource.data.priority in ['none', 'low', 'medium', 'high']
+          && isList(request.resource.data.tags)
+          && request.resource.data.get('updatedAt', null) is timestamp;
+
+        allow delete: if isOwner(userId);
+      }
+
+      // ── Task Lists ────────────────────────────────────
+      match /lists/{listId} {
+        allow read: if isOwner(userId);
+
+        allow create: if isOwner(userId)
+          && isString(request.resource.data.name)
+          && request.resource.data.name.size() >= 1
+          && request.resource.data.name.size() <= 200
+          && request.resource.data.get('createdAt', null) is timestamp
+          && request.resource.data.get('updatedAt', null) is timestamp;
+
+        allow update: if isOwner(userId)
+          && isString(request.resource.data.name)
+          && request.resource.data.name.size() >= 1
+          && request.resource.data.name.size() <= 200
+          && request.resource.data.get('updatedAt', null) is timestamp;
+
+        allow delete: if isOwner(userId);
+      }
+
+      // ── Attachments (metadata) ────────────────────────
+      match /attachments/{attachmentId} {
+        allow read: if isOwner(userId);
+
+        allow create: if isOwner(userId)
+          && isString(request.resource.data.taskId)
+          && isString(request.resource.data.fileName)
+          && isString(request.resource.data.mimeType)
+          && isNumber(request.resource.data.sizeBytes)
+          && request.resource.data.sizeBytes > 0
+          && request.resource.data.sizeBytes <= 10 * 1024 * 1024
+          && request.resource.data.get('createdAt', null) is timestamp;
+
+        allow update: if isOwner(userId);
+
+        allow delete: if isOwner(userId);
+      }
     }
 
     // Deny all other access

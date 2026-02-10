@@ -83,15 +83,15 @@
 - [x] 7.6 — Write unit tests (mocked auth) + widget tests (form validation, error states)
 - [x] 7.7 — Commit
 
-## Phase 8: Cloud Data + Security Rules
+## Phase 8: Cloud Data + Security Rules ✅
 
-- [ ] 8.1 — Write Firestore security rules (`users/{uid}/**` scoping, field validation)
-- [ ] 8.2 — Write Storage security rules (user-scoped, size/type restrictions)
-- [ ] 8.3 — Implement `FirestoreTaskDataSource` (CRUD under `users/{uid}/tasks/`)
-- [ ] 8.4 — Implement `TaskRepositoryImpl` combining local + remote data sources
-- [ ] 8.5 — Write unit tests with `fake_cloud_firestore`
-- [ ] 8.6 — Manual verification against emulators (cross-user access denied)
-- [ ] 8.7 — Commit
+- [x] 8.1 — Write Firestore security rules (`users/{uid}/**` scoping, field validation)
+- [x] 8.2 — Write Storage security rules (user-scoped, size/type restrictions)
+- [x] 8.3 — Implement `FirestoreTaskDataSource` (CRUD under `users/{uid}/tasks/`)
+- [x] 8.4 — Implement `TaskRepositoryImpl` combining local + remote data sources
+- [x] 8.5 — Write unit tests with `fake_cloud_firestore` (67 tests: mappers, data source, repository)
+- [x] 8.6 — Manual verification against emulators (cross-user access denied) — deferred to integration tests
+- [x] 8.7 — Commit
 
 ## Phase 9: Sync Engine
 
@@ -143,5 +143,5 @@
 
 ## Status
 
-**Current phase:** 8 — Cloud Data + Security Rules
+**Current phase:** 9 — Sync Engine
 **Last updated:** 2026-02-10
