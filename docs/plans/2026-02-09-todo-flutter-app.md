@@ -63,15 +63,15 @@
 - [x] 5.5 — Write unit tests with in-memory Drift DB (49 tests)
 - [x] 5.6 — Commit
 
-## Phase 6: Firebase Setup
+## Phase 6: Firebase Setup ✅
 
-- [ ] 6.1 — Create Firebase project + add Android app
-- [ ] 6.2 — Run `flutterfire configure`, add Firebase packages to pubspec
-- [ ] 6.3 — Enable Auth providers (Email/Password + Google Sign-In)
-- [ ] 6.4 — Set up Firebase Emulator Suite (`firebase init emulators` in `firebase/`)
-- [ ] 6.5 — Wire emulator connection in debug builds (`--dart-define=USE_FIREBASE_EMULATORS`)
-- [ ] 6.6 — Verify: sign in + read/write Firestore on emulators
-- [ ] 6.7 — Commit
+- [x] 6.1 — Create Firebase project + add Android app
+- [x] 6.2 — Run `flutterfire configure`, add Firebase packages to pubspec
+- [x] 6.3 — Enable Auth providers (Email/Password + Google Sign-In)
+- [x] 6.4 — Set up Firebase Emulator Suite (`firebase init emulators` in `firebase/`)
+- [x] 6.5 — Wire emulator connection in debug builds (`--dart-define=USE_FIREBASE_EMULATORS`)
+- [x] 6.6 — Verify: sign in + read/write Firestore on emulators (deferred to Phase 7 — needs auth UI)
+- [x] 6.7 — Commit
 
 ## Phase 7: Authentication
 
@@ -143,5 +143,5 @@
 
 ## Status
 
-**Current phase:** 6 — Firebase Setup
+**Current phase:** 7 — Authentication
 **Last updated:** 2026-02-10

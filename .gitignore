@@ -22,6 +22,8 @@ Thumbs.db
 
 # === Firebase emulator data (local-only) ===
 firebase/emulators/
+firebase/*-debug.log
+firebase/ui-debug.log
 
 # === Dart/Flutter tooling ===
 .dart_tool/

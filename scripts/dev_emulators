@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Start Firebase emulators from the firebase/ directory.
+cd "$(dirname "$0")/../firebase"
+
+echo "Starting Firebase Emulators..."
+echo "  Auth:      http://127.0.0.1:9099"
+echo "  Firestore: http://127.0.0.1:8080"
+echo "  Storage:   http://127.0.0.1:9199"
+echo "  UI:        http://127.0.0.1:4000"
+echo ""
+
+firebase emulators:start --only auth,firestore,storage

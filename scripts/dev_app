@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Run the Flutter app with Firebase emulators enabled.
+cd "$(dirname "$0")/../app"
+
+echo "Running app with Firebase Emulators..."
+flutter run --dart-define=USE_FIREBASE_EMULATORS=true "$@"
