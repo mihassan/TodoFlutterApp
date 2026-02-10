@@ -15,7 +15,7 @@ class AddAttachmentButton extends StatelessWidget {
     final ImagePicker picker = ImagePicker();
 
     // Show menu to choose between gallery and file picker
-    showModalBottomSheet<void>(
+    await showModalBottomSheet<void>(
       context: context,
       builder: (BuildContext context) {
         return SafeArea(

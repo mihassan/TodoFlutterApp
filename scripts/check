@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Run format check, analysis, and tests from the app/ directory.
-cd "$(dirname "$0")/../app"
+# Run format check, analysis, and tests.
+ROOT="$(dirname "$0")/.."
 
 echo "=== Checking formatting ==="
-dart format --set-exit-if-changed .
+dart format --set-exit-if-changed "$ROOT"
 
 echo "=== Running analysis ==="
+cd "$ROOT/app"
 flutter analyze
 
 echo "=== Running tests ==="

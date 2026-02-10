@@ -145,5 +145,5 @@
 
 **Current phase:** 13 — Integration Tests + CI (In progress)
 **Last updated:** 2026-02-11
-**Test count:** ~395 passing, 5 pre-existing failures (router_test.dart)
+**Test count:** 398 passing, 0 failures
 **Progress:** Integration tests added and CI workflow created. Pending: verify CI on push and commit.

@@ -20,13 +20,13 @@ void main() {
       mockSettingsController = MockSettingsController();
     });
 
-    Widget _buildScreen({User? user}) {
+    Widget buildScreen({User? user}) {
       return ProviderScope(
         overrides: [
           currentUserProvider.overrideWithValue(user),
           settingsControllerProvider.overrideWithValue(mockSettingsController),
         ],
-        child: MaterialApp(home: SettingsScreen()),
+        child: const MaterialApp(home: SettingsScreen()),
       );
     }
 
@@ -41,7 +41,7 @@ void main() {
         updatedAt: DateTime.utc(2024, 1, 1),
       );
 
-      await tester.pumpWidget(_buildScreen(user: testUser));
+      await tester.pumpWidget(buildScreen(user: testUser));
 
       expect(find.text('Profile'), findsOneWidget);
       expect(find.text('Email'), findsOneWidget);
@@ -58,7 +58,7 @@ void main() {
         updatedAt: DateTime.utc(2024, 1, 1),
       );
 
-      await tester.pumpWidget(_buildScreen(user: testUser));
+      await tester.pumpWidget(buildScreen(user: testUser));
 
       expect(find.text('Theme'), findsOneWidget);
     });
@@ -74,7 +74,7 @@ void main() {
         updatedAt: DateTime.utc(2024, 1, 1),
       );
 
-      await tester.pumpWidget(_buildScreen(user: testUser));
+      await tester.pumpWidget(buildScreen(user: testUser));
 
       expect(find.text('Account'), findsOneWidget);
       expect(find.text('Sign Out'), findsOneWidget);
@@ -84,13 +84,13 @@ void main() {
     testWidgets('null user email shows "No email"', (
       WidgetTester tester,
     ) async {
-      await tester.pumpWidget(_buildScreen(user: null));
+      await tester.pumpWidget(buildScreen(user: null));
 
       expect(find.text('No email'), findsOneWidget);
     });
 
     testWidgets('has settings appbar title', (WidgetTester tester) async {
-      await tester.pumpWidget(_buildScreen(user: null));
+      await tester.pumpWidget(buildScreen(user: null));
 
       expect(find.byType(AppBar), findsOneWidget);
       expect(find.text('Settings'), findsOneWidget);

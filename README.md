@@ -50,7 +50,7 @@ scripts/          # Dev helper scripts
 
 ```sh
 # Clone the repo
-git clone https://github.com/<your-username>/TodoFlutterApp.git
+git clone https://github.com/mihassan/TodoFlutterApp.git
 cd TodoFlutterApp/app
 
 # Install dependencies

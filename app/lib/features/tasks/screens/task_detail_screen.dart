@@ -171,7 +171,7 @@ class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> {
             isUploading: isUploadingAsync.when(
               data: (uploading) => uploading,
               loading: () => false,
-              error: (_, __) => false,
+              error: (_, _) => false,
             ),
           ),
         ],

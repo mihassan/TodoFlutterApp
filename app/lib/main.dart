@@ -66,10 +66,8 @@ class TodoApp extends ConsumerWidget {
       },
       loading: () {
         // Show a loading screen while theme preference loads
-        return MaterialApp(
-          home: Scaffold(
-            body: Center(child: const CircularProgressIndicator()),
-          ),
+        return const MaterialApp(
+          home: Scaffold(body: Center(child: CircularProgressIndicator())),
         );
       },
       error: (error, stackTrace) {
