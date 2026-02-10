@@ -119,8 +119,8 @@
 - [x] 11.1 — Add file/image picker dependency
 - [x] 11.2 — Implement upload to Firebase Storage (`users/{uid}/attachments/`)
 - [x] 11.3 — Store attachment metadata in Firestore + local DB
-- [ ] 11.4 — Handle offline: queue upload, show "pending" status
-- [ ] 11.5 — Display attachments on task detail (thumbnail/link)
+- [x] 11.4 — Handle offline: queue upload, show "pending" status
+- [~] 11.5 — Display attachments on task detail (thumbnail/link)
 - [x] 11.6 — Write unit tests for attachment state machine
 - [ ] 11.7 — Commit
 
@@ -143,6 +143,6 @@
 
 ## Status
 
-**Current phase:** 11 — Attachments (In Progress)
+**Current phase:** 11 — Attachments (In Progress, Phase 11.5)
 **Last updated:** 2026-02-11
-**Test count:** 378 (was 366)
+**Test count:** 378+ (was 366, +12 from 11.3)
