@@ -54,14 +54,14 @@
 - [x] 4.5 — Write unit tests using fakes
 - [x] 4.6 — Commit
 
-## Phase 5: Local Persistence (Drift)
+## Phase 5: Local Persistence (Drift) ✅
 
-- [ ] 5.1 — Add Drift dependencies and configure database
-- [ ] 5.2 — Create tables: `tasks`, `task_lists`, `attachments`, `sync_queue`
-- [ ] 5.3 — Implement `LocalTaskDataSource` with CRUD operations
-- [ ] 5.4 — Add sync tracking fields: `isDirty`, `lastSyncedAt`
-- [ ] 5.5 — Write unit tests with in-memory Drift DB
-- [ ] 5.6 — Commit
+- [x] 5.1 — Add Drift dependencies and configure database
+- [x] 5.2 — Create tables: `tasks`, `task_lists`, `attachments`, `sync_queue` (merged 5.4 — sync tracking baked in)
+- [x] 5.3 — Implement `LocalTaskDataSource`, `LocalAttachmentDataSource`, `LocalSyncQueueDataSource` with CRUD operations
+- [x] 5.4 — _(merged into 5.2)_
+- [x] 5.5 — Write unit tests with in-memory Drift DB (49 tests)
+- [x] 5.6 — Commit
 
 ## Phase 6: Firebase Setup
 
@@ -143,5 +143,5 @@
 
 ## Status
 
-**Current phase:** 5 — Local Persistence (Drift)
+**Current phase:** 6 — Firebase Setup
 **Last updated:** 2026-02-10

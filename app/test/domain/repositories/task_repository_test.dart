@@ -1,7 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:todo_flutter_app/core/failures.dart';
 import 'package:todo_flutter_app/data/repositories/fake_task_repository.dart';
-import 'package:todo_flutter_app/domain/entities/priority.dart';
 import 'package:todo_flutter_app/domain/entities/task.dart';
 import 'package:todo_flutter_app/domain/entities/task_list.dart';
 import 'package:todo_flutter_app/domain/repositories/task_repository.dart';
