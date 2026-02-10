@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:todo_flutter_app/data/data_sources/local/local_attachment_data_source.dart';
 import 'package:todo_flutter_app/data/data_sources/remote/firebase_storage_attachment_data_source.dart';
+import 'package:todo_flutter_app/data/data_sources/remote/firestore_attachment_data_source.dart';
 import 'package:todo_flutter_app/data/repositories/attachment_repository_impl.dart';
 import 'package:todo_flutter_app/domain/entities/attachment.dart';
 import 'package:todo_flutter_app/domain/repositories/attachment_repository.dart';
@@ -22,6 +24,14 @@ final firebaseStorageAttachmentDataSourceProvider =
       );
     });
 
+final firestoreAttachmentDataSourceProvider =
+    Provider.family<FirestoreAttachmentDataSource, String>((ref, userId) {
+      return FirestoreAttachmentDataSource(
+        firestore: FirebaseFirestore.instance,
+        userId: userId,
+      );
+    });
+
 final attachmentRepositoryProvider = Provider<AttachmentRepository>((ref) {
   final user = ref.watch(currentUserProvider);
   if (user == null) {
@@ -31,6 +41,9 @@ final attachmentRepositoryProvider = Provider<AttachmentRepository>((ref) {
   return AttachmentRepositoryImpl(
     localDataSource: ref.watch(localAttachmentDataSourceProvider),
     remoteDataSource: ref.watch(firebaseStorageAttachmentDataSourceProvider),
+    firestoreDataSource: ref.watch(
+      firestoreAttachmentDataSourceProvider(user.uid),
+    ),
     userId: user.uid,
   );
 });

@@ -9,22 +9,40 @@ import 'package:todo_flutter_app/core/failures.dart';
 import 'package:todo_flutter_app/data/data_sources/local/app_database.dart';
 import 'package:todo_flutter_app/data/data_sources/local/local_attachment_data_source.dart';
 import 'package:todo_flutter_app/data/data_sources/remote/firebase_storage_attachment_data_source.dart';
+import 'package:todo_flutter_app/data/data_sources/remote/firestore_attachment_data_source.dart';
 import 'package:todo_flutter_app/data/repositories/attachment_repository_impl.dart';
 import 'package:todo_flutter_app/domain/entities/attachment.dart';
 
 class MockFirebaseStorageAttachmentDataSource extends Mock
     implements FirebaseStorageAttachmentDataSource {}
 
+class MockFirestoreAttachmentDataSource extends Mock
+    implements FirestoreAttachmentDataSource {}
+
 class FakeFile extends Fake implements File {}
 
 void main() {
   setUpAll(() {
     registerFallbackValue(FakeFile());
+    registerFallbackValue(
+      Attachment(
+        id: 'fallback',
+        taskId: 'fallback',
+        fileName: 'fallback.txt',
+        mimeType: 'text/plain',
+        sizeBytes: 0,
+        localPath: '/fallback',
+        createdAt: DateTime.now().toUtc(),
+      ),
+    );
+    registerFallbackValue('');
+    registerFallbackValue(<String, dynamic>{});
   });
 
   late AppDatabase db;
   late LocalAttachmentDataSource localDataSource;
   late MockFirebaseStorageAttachmentDataSource mockRemoteDataSource;
+  late MockFirestoreAttachmentDataSource mockFirestoreDataSource;
   late AttachmentRepositoryImpl repository;
 
   const uid = 'user-123';
@@ -35,9 +53,23 @@ void main() {
     db = AppDatabase(NativeDatabase.memory());
     localDataSource = LocalAttachmentDataSource(db);
     mockRemoteDataSource = MockFirebaseStorageAttachmentDataSource();
+    mockFirestoreDataSource = MockFirestoreAttachmentDataSource();
+
+    // Set up Firestore mock to return successful futures
+    when(
+      () => mockFirestoreDataSource.setAttachment(any()),
+    ).thenAnswer((_) async {});
+    when(
+      () => mockFirestoreDataSource.updateAttachment(any(), any(), any()),
+    ).thenAnswer((_) async {});
+    when(
+      () => mockFirestoreDataSource.deleteAttachment(any(), any()),
+    ).thenAnswer((_) async {});
+
     repository = AttachmentRepositoryImpl(
       localDataSource: localDataSource,
       remoteDataSource: mockRemoteDataSource,
+      firestoreDataSource: mockFirestoreDataSource,
       userId: uid,
     );
   });

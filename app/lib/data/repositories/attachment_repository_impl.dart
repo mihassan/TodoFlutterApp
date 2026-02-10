@@ -6,6 +6,7 @@ import 'package:uuid/uuid.dart';
 import 'package:todo_flutter_app/core/failures.dart';
 import 'package:todo_flutter_app/data/data_sources/local/local_attachment_data_source.dart';
 import 'package:todo_flutter_app/data/data_sources/remote/firebase_storage_attachment_data_source.dart';
+import 'package:todo_flutter_app/data/data_sources/remote/firestore_attachment_data_source.dart';
 import 'package:todo_flutter_app/domain/entities/attachment.dart';
 import 'package:todo_flutter_app/domain/repositories/attachment_repository.dart';
 
@@ -15,18 +16,22 @@ import 'package:todo_flutter_app/domain/repositories/attachment_repository.dart'
 /// - Adds files locally first (status = pending)
 /// - Enqueues upload in background via [syncUploads]
 /// - Syncs with Firebase Storage and updates remote URLs
+/// - Persists attachment metadata to Firestore for cross-device sync
 /// - Returns failures mapped to [StorageFailure] subclasses
 class AttachmentRepositoryImpl implements AttachmentRepository {
   AttachmentRepositoryImpl({
     required LocalAttachmentDataSource localDataSource,
     required FirebaseStorageAttachmentDataSource remoteDataSource,
+    required FirestoreAttachmentDataSource firestoreDataSource,
     required String userId,
   }) : _local = localDataSource,
        _remote = remoteDataSource,
+       _firestore = firestoreDataSource,
        _userId = userId;
 
   final LocalAttachmentDataSource _local;
   final FirebaseStorageAttachmentDataSource _remote;
+  final FirestoreAttachmentDataSource _firestore;
   final String _userId;
 
   final _uploadingController = StreamController<bool>.broadcast();
@@ -84,6 +89,14 @@ class AttachmentRepositoryImpl implements AttachmentRepository {
       // Save locally (offline-first)
       await _local.insertAttachment(attachment);
 
+      // Save metadata to Firestore immediately (fire-and-forget)
+      // Allows other devices to see the pending attachment
+      unawaited(
+        _firestore.setAttachment(attachment).catchError((e) {
+          // Ignore errors — local DB is the source of truth
+        }),
+      );
+
       return (attachment, null);
     } catch (e) {
       return (
@@ -120,7 +133,7 @@ class AttachmentRepositoryImpl implements AttachmentRepository {
   @override
   Future<StorageFailure?> deleteAttachment(String attachmentId) async {
     try {
-      // Get attachment to find remote URL for deletion
+      // Get attachment to find remote URL for deletion and get taskId
       final (attachment, error) = await getAttachmentById(attachmentId);
       if (error != null) {
         return error;
@@ -130,6 +143,17 @@ class AttachmentRepositoryImpl implements AttachmentRepository {
       final deleted = await _local.deleteAttachment(attachmentId);
       if (!deleted) {
         return const NotFound('Attachment not found.');
+      }
+
+      // Delete from Firestore (fire-and-forget)
+      if (attachment != null) {
+        unawaited(
+          _firestore
+              .deleteAttachment(attachment.taskId, attachmentId)
+              .catchError((e) {
+                // Ignore errors
+              }),
+        );
       }
 
       // Delete from remote storage (fire-and-forget, don't block on failure)
@@ -192,6 +216,7 @@ class AttachmentRepositoryImpl implements AttachmentRepository {
   /// Uploads a single attachment to Firebase Storage.
   ///
   /// Updates the attachment status and remote URL in local DB on success.
+  /// Also saves metadata to Firestore for cross-device sync.
   /// Throws an exception on failure.
   Future<void> _uploadAttachment(Attachment attachment) async {
     // Update status to uploading
@@ -218,6 +243,16 @@ class AttachmentRepositoryImpl implements AttachmentRepository {
         remoteUrl: remoteUrl,
       );
       await _local.updateAttachment(uploaded);
+
+      // Save metadata to Firestore for cross-device sync
+      // (fire-and-forget, don't block on Firestore write failure)
+      unawaited(
+        _firestore.setAttachment(uploaded).catchError((e) {
+          // Log error but don't propagate — file is already uploaded
+          // and stored locally
+        }),
+      );
+
       await _local.markAttachmentSynced(attachment.id);
     } catch (e) {
       rethrow;
