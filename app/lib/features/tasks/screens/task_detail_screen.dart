@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
+import 'package:todo_flutter_app/app/providers/attachment_providers.dart';
 import 'package:todo_flutter_app/app/providers/task_providers.dart';
 import 'package:todo_flutter_app/domain/entities/priority.dart';
+import '../widgets/attachment_list_section.dart';
+import '../widgets/add_attachment_button.dart';
 
 /// Screen for viewing and editing a task.
 ///
@@ -126,6 +130,92 @@ class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> {
     }
   }
 
+  Widget _buildAttachmentsSection() {
+    final attachmentsAsync = ref.watch(
+      attachmentsByTaskIdProvider(widget.taskId),
+    );
+    final isUploadingAsync = ref.watch(isUploadingProvider);
+
+    return attachmentsAsync.when(
+      data: (attachments) => Column(
+        children: [
+          AttachmentListSection(
+            attachments: attachments,
+            onRetry: (id) {
+              // TODO: Add retry method to repository in Phase 11.6
+            },
+            onDelete: (id) async {
+              await ref.read(attachmentRepositoryProvider).deleteAttachment(id);
+            },
+          ),
+          const SizedBox(height: 12),
+          AddAttachmentButton(
+            onFileSelected: (path) async {
+              // Extract file metadata from path
+              final file = XFile(path);
+              final fileName = file.name;
+              final mimeType = _getMimeType(fileName);
+              final sizeBytes = await file.length();
+
+              // Add attachment to repository
+              await ref
+                  .read(attachmentRepositoryProvider)
+                  .addAttachment(
+                    taskId: widget.taskId,
+                    localFilePath: path,
+                    fileName: fileName,
+                    mimeType: mimeType,
+                    sizeBytes: sizeBytes,
+                  );
+            },
+            isUploading: isUploadingAsync.when(
+              data: (uploading) => uploading,
+              loading: () => false,
+              error: (_, __) => false,
+            ),
+          ),
+        ],
+      ),
+      loading: () => const SizedBox(
+        height: 100,
+        child: Center(child: CircularProgressIndicator()),
+      ),
+      error: (err, st) => Padding(
+        padding: const EdgeInsets.all(16),
+        child: Text(
+          'Failed to load attachments: $err',
+          style: TextStyle(color: Colors.red.shade600),
+        ),
+      ),
+    );
+  }
+
+  String _getMimeType(String fileName) {
+    final ext = fileName.split('.').last.toLowerCase();
+    switch (ext) {
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      case 'gif':
+        return 'image/gif';
+      case 'pdf':
+        return 'application/pdf';
+      case 'doc':
+      case 'docx':
+        return 'application/msword';
+      case 'txt':
+        return 'text/plain';
+      case 'mp4':
+        return 'video/mp4';
+      case 'mov':
+        return 'video/quicktime';
+      default:
+        return 'application/octet-stream';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final editState = ref.watch(taskEditControllerProvider);
@@ -219,6 +309,9 @@ class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> {
                     enabled: !editState.isSaving,
                     maxLines: 4,
                   ),
+                  const SizedBox(height: 12),
+                  // Attachments section
+                  _buildAttachmentsSection(),
                   const SizedBox(height: 12),
                   // Due date
                   Row(

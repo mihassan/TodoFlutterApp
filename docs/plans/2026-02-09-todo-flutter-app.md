@@ -143,6 +143,7 @@
 
 ## Status
 
-**Current phase:** 11 — Attachments (In Progress, Phase 11.5)
+**Current phase:** 11 — Attachments (In Progress, Phase 11.5 ~60%)
 **Last updated:** 2026-02-11
-**Test count:** 378+ (was 366, +12 from 11.3)
+**Test count:** 390+ (was 378, +12 from 11.3, +15 from 11.5 widgets)
+**Progress:** Phase 11.5 — 3 widgets created (AttachmentTile, AttachmentListSection, AddAttachmentButton); remaining: integrate into TaskDetailScreen
