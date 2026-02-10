@@ -95,12 +95,12 @@
 
 ## Phase 9: Sync Engine
 
-- [ ] 9.1 — Implement sync queue processor: read dirty records → push to Firestore → mark clean
-- [ ] 9.2 — Implement pull sync: fetch remote changes → merge into local DB (last-write-wins)
-- [ ] 9.3 — Trigger sync on: app start, pull-to-refresh, network regain
-- [ ] 9.4 — Add retry with backoff for failed syncs
-- [ ] 9.5 — Surface sync status in UI (syncing/synced/error indicator)
-- [ ] 9.6 — Write unit tests with fake clock + mocked cloud data source
+- [x] 9.1 — Implement sync queue processor: read dirty records → push to Firestore → mark clean
+- [x] 9.2 — Implement pull sync: fetch remote changes → merge into local DB (last-write-wins)
+- [~] 9.3 — Trigger sync on: app start, pull-to-refresh, network regain
+- [x] 9.4 — Add retry with backoff for failed syncs
+- [x] 9.5 — Surface sync status in UI (syncing/synced/error indicator)
+- [x] 9.6 — Write unit tests with fake clock + mocked cloud data source
 - [ ] 9.7 — Commit
 
 ## Phase 10: Task UI (Full Feature)
@@ -144,4 +144,4 @@
 ## Status
 
 **Current phase:** 9 — Sync Engine
-**Last updated:** 2026-02-10
+**Last updated:** 2026-02-11

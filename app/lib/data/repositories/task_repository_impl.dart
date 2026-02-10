@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:todo_flutter_app/core/failures.dart';
+import 'package:todo_flutter_app/data/data_sources/local/app_database.dart';
+import 'package:todo_flutter_app/data/data_sources/local/local_sync_queue_data_source.dart';
 import 'package:todo_flutter_app/data/data_sources/local/local_task_data_source.dart';
 import 'package:todo_flutter_app/data/data_sources/remote/firestore_task_data_source.dart';
 import 'package:todo_flutter_app/domain/entities/task.dart';
@@ -23,11 +25,14 @@ class TaskRepositoryImpl implements TaskRepository {
   TaskRepositoryImpl({
     required LocalTaskDataSource localDataSource,
     required FirestoreTaskDataSource remoteDataSource,
+    required LocalSyncQueueDataSource syncQueueDataSource,
   }) : _local = localDataSource,
-       _remote = remoteDataSource;
+       _remote = remoteDataSource,
+       _syncQueue = syncQueueDataSource;
 
   final LocalTaskDataSource _local;
   final FirestoreTaskDataSource _remote;
+  final LocalSyncQueueDataSource _syncQueue;
 
   final _syncController = StreamController<bool>.broadcast();
   bool _isSyncingNow = false;
@@ -68,6 +73,11 @@ class TaskRepositoryImpl implements TaskRepository {
   Future<(Task, StorageFailure?)> createTask(Task task) async {
     try {
       await _local.insertTask(task);
+      await _syncQueue.enqueue(
+        entityType: 'task',
+        entityId: task.id,
+        operation: 'create',
+      );
       return (task, null);
     } on Exception catch (e) {
       return (task, DatabaseFailure(e.toString()));
@@ -81,6 +91,11 @@ class TaskRepositoryImpl implements TaskRepository {
       if (!updated) {
         return (task, const NotFound('Task not found.'));
       }
+      await _syncQueue.enqueue(
+        entityType: 'task',
+        entityId: task.id,
+        operation: 'update',
+      );
       return (task, null);
     } on Exception catch (e) {
       return (task, DatabaseFailure(e.toString()));
@@ -94,6 +109,11 @@ class TaskRepositoryImpl implements TaskRepository {
       if (!deleted) {
         return const NotFound('Task not found.');
       }
+      await _syncQueue.enqueue(
+        entityType: 'task',
+        entityId: taskId,
+        operation: 'delete',
+      );
       return null;
     } on Exception catch (e) {
       return DatabaseFailure(e.toString());
@@ -104,6 +124,11 @@ class TaskRepositoryImpl implements TaskRepository {
   Future<(TaskList, StorageFailure?)> createTaskList(TaskList list) async {
     try {
       await _local.insertTaskList(list);
+      await _syncQueue.enqueue(
+        entityType: 'taskList',
+        entityId: list.id,
+        operation: 'create',
+      );
       return (list, null);
     } on Exception catch (e) {
       return (list, DatabaseFailure(e.toString()));
@@ -117,6 +142,11 @@ class TaskRepositoryImpl implements TaskRepository {
       if (!updated) {
         return (list, const NotFound('Task list not found.'));
       }
+      await _syncQueue.enqueue(
+        entityType: 'taskList',
+        entityId: list.id,
+        operation: 'update',
+      );
       return (list, null);
     } on Exception catch (e) {
       return (list, DatabaseFailure(e.toString()));
@@ -130,6 +160,11 @@ class TaskRepositoryImpl implements TaskRepository {
       if (!deleted) {
         return const NotFound('Task list not found.');
       }
+      await _syncQueue.enqueue(
+        entityType: 'taskList',
+        entityId: listId,
+        operation: 'delete',
+      );
       return null;
     } on Exception catch (e) {
       return DatabaseFailure(e.toString());
@@ -147,6 +182,7 @@ class TaskRepositoryImpl implements TaskRepository {
 
     try {
       // Phase 1: Push dirty tasks to Firestore
+      await _processSyncQueue();
       await _pushDirtyTasks();
       await _pushDirtyTaskLists();
 
@@ -216,12 +252,64 @@ class TaskRepositoryImpl implements TaskRepository {
         // New remote list — insert locally
         await _local.insertTaskList(remoteList);
         await _local.markTaskListSynced(remoteList.id);
-      } else {
-        // Update if remote is newer
+      } else if (!_isLocalListDirty(localList, remoteList)) {
+        // Remote is newer (or equal) and local isn't dirty — update
         await _local.updateTaskList(remoteList);
         await _local.markTaskListSynced(remoteList.id);
       }
     }
+  }
+
+  // ── Sync queue processing ───────────────────────────────
+
+  Future<void> _processSyncQueue() async {
+    final entries = await _syncQueue.getPendingEntries();
+    for (final entry in entries) {
+      try {
+        await _applySyncQueueEntry(entry);
+        await _syncQueue.remove(entry.id);
+      } on Exception {
+        await _syncQueue.incrementRetryCount(entry.id);
+        rethrow;
+      }
+    }
+  }
+
+  Future<void> _applySyncQueueEntry(SyncQueueData entry) async {
+    switch (entry.entityType) {
+      case 'task':
+        return _applyTaskQueueEntry(entry);
+      case 'taskList':
+        return _applyTaskListQueueEntry(entry);
+      default:
+        throw StateError('Unknown sync entity type: ${entry.entityType}');
+    }
+  }
+
+  Future<void> _applyTaskQueueEntry(SyncQueueData entry) async {
+    if (entry.operation == 'delete') {
+      await _remote.deleteTask(entry.entityId);
+      return;
+    }
+
+    final task = await _local.getTaskById(entry.entityId);
+    if (task == null) return;
+
+    await _remote.setTask(task);
+    await _local.markTaskSynced(task.id);
+  }
+
+  Future<void> _applyTaskListQueueEntry(SyncQueueData entry) async {
+    if (entry.operation == 'delete') {
+      await _remote.deleteTaskList(entry.entityId);
+      return;
+    }
+
+    final list = await _local.getTaskListById(entry.entityId);
+    if (list == null) return;
+
+    await _remote.setTaskList(list);
+    await _local.markTaskListSynced(list.id);
   }
 
   /// Checks whether the local version should take precedence.
@@ -229,6 +317,10 @@ class TaskRepositoryImpl implements TaskRepository {
   /// In last-write-wins, the record with the later [updatedAt] wins.
   /// If the local record was updated after the remote, we keep the local.
   bool _isLocalDirty(Task local, Task remote) {
+    return local.updatedAt.isAfter(remote.updatedAt);
+  }
+
+  bool _isLocalListDirty(TaskList local, TaskList remote) {
     return local.updatedAt.isAfter(remote.updatedAt);
   }
 }

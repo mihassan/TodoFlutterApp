@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:todo_flutter_app/core/failures.dart';
 import 'package:todo_flutter_app/data/data_sources/local/app_database.dart';
+import 'package:todo_flutter_app/data/data_sources/local/local_sync_queue_data_source.dart';
 import 'package:todo_flutter_app/data/data_sources/local/local_task_data_source.dart';
 import 'package:todo_flutter_app/data/data_sources/remote/firestore_task_data_source.dart';
 import 'package:todo_flutter_app/data/repositories/task_repository_impl.dart';
@@ -14,6 +15,7 @@ import 'package:todo_flutter_app/domain/entities/task_list.dart';
 void main() {
   late AppDatabase db;
   late LocalTaskDataSource localDataSource;
+  late LocalSyncQueueDataSource syncQueueDataSource;
   late FakeFirebaseFirestore firestore;
   late FirestoreTaskDataSource remoteDataSource;
   late TaskRepositoryImpl repository;
@@ -26,11 +28,13 @@ void main() {
   setUp(() {
     db = AppDatabase(NativeDatabase.memory());
     localDataSource = LocalTaskDataSource(db);
+    syncQueueDataSource = LocalSyncQueueDataSource(db);
     firestore = FakeFirebaseFirestore();
     remoteDataSource = FirestoreTaskDataSource(firestore: firestore, uid: uid);
     repository = TaskRepositoryImpl(
       localDataSource: localDataSource,
       remoteDataSource: remoteDataSource,
+      syncQueueDataSource: syncQueueDataSource,
     );
   });
 
@@ -254,6 +258,18 @@ void main() {
       expect(remoteLists.first.name, 'Push list');
     });
 
+    test('sync pushes task deletions to Firestore', () async {
+      final task = makeTask(id: 'delete-task', title: 'Delete me');
+      await repository.createTask(task);
+      await repository.sync();
+
+      await repository.deleteTask(task.id);
+      await repository.sync();
+
+      final remoteTasks = await remoteDataSource.getTasks();
+      expect(remoteTasks, isEmpty);
+    });
+
     test('sync marks tasks as clean after push', () async {
       final task = makeTask(id: 'clean-after-push');
       await repository.createTask(task);
@@ -424,9 +440,11 @@ void main() {
       // Create a new repo instance with fresh local DB but same Firestore
       final db2 = AppDatabase(NativeDatabase.memory());
       final localDs2 = LocalTaskDataSource(db2);
+      final syncQueueDs2 = LocalSyncQueueDataSource(db2);
       final repo2 = TaskRepositoryImpl(
         localDataSource: localDs2,
         remoteDataSource: remoteDataSource,
+        syncQueueDataSource: syncQueueDs2,
       );
 
       // Sync pulls everything into the new local DB

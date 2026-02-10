@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:todo_flutter_app/app/routes.dart';
+import 'package:todo_flutter_app/app/providers/task_providers.dart';
 import 'package:todo_flutter_app/features/auth/providers/auth_provider.dart';
 import 'package:todo_flutter_app/features/auth/screens/forgot_password_screen.dart';
 import 'package:todo_flutter_app/features/auth/screens/sign_in_screen.dart';
@@ -83,15 +84,37 @@ final routerProvider = Provider<GoRouter>((ref) {
 /// The app shell wrapping authenticated screens.
 ///
 /// Provides a bottom navigation bar for switching between tasks and settings.
-class _AppShell extends StatelessWidget {
+class _AppShell extends ConsumerWidget {
   const _AppShell({required this.child});
 
   final Widget child;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final syncStatus = ref.watch(syncControllerProvider);
+    final theme = Theme.of(context);
+    final showIndicator = syncStatus.isSyncing || syncStatus.hasError;
+
     return Scaffold(
-      body: child,
+      body: Stack(
+        children: [
+          child,
+          if (showIndicator)
+            Positioned(
+              top: 12,
+              right: 12,
+              child: IgnorePointer(
+                child: _SyncStatusPill(
+                  color: syncStatus.isSyncing
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.error,
+                  icon: syncStatus.isSyncing ? Icons.sync : Icons.cloud_off,
+                  label: syncStatus.isSyncing ? 'Syncing' : 'Sync error',
+                ),
+              ),
+            ),
+        ],
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex(context),
         onDestinationSelected: (index) => _onTap(context, index),
@@ -124,5 +147,44 @@ class _AppShell extends StatelessWidget {
       case 1:
         context.go(AppRoutes.settings);
     }
+  }
+}
+
+class _SyncStatusPill extends StatelessWidget {
+  const _SyncStatusPill({
+    required this.color,
+    required this.icon,
+    required this.label,
+  });
+
+  final Color color;
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: label,
+      child: Material(
+        color: color,
+        borderRadius: BorderRadius.circular(999),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 16, color: Colors.white),
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: Theme.of(
+                  context,
+                ).textTheme.labelMedium?.copyWith(color: Colors.white),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

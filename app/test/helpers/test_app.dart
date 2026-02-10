@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:todo_flutter_app/app/theme.dart';
+import 'package:todo_flutter_app/app/providers/task_providers.dart';
+import 'package:todo_flutter_app/data/repositories/fake_task_repository.dart';
+import 'package:todo_flutter_app/data/services/connectivity_service.dart';
 import 'package:todo_flutter_app/data/repositories/fake_auth_repository.dart';
 import 'package:todo_flutter_app/features/auth/providers/auth_provider.dart';
 
@@ -57,6 +60,10 @@ List<Override> authenticatedOverrides() {
   return [
     ...fakeAuthOverrides(),
     isAuthenticatedProvider.overrideWith((_) => true),
+    taskRepositoryProvider.overrideWithValue(FakeTaskRepository()),
+    connectivityServiceProvider.overrideWithValue(
+      _AlwaysConnectedConnectivityService(),
+    ),
   ];
 }
 
@@ -65,5 +72,17 @@ List<Override> unauthenticatedOverrides() {
   return [
     ...fakeAuthOverrides(),
     isAuthenticatedProvider.overrideWith((_) => false),
+    taskRepositoryProvider.overrideWithValue(FakeTaskRepository()),
+    connectivityServiceProvider.overrideWithValue(
+      _AlwaysConnectedConnectivityService(),
+    ),
   ];
+}
+
+class _AlwaysConnectedConnectivityService implements ConnectivityService {
+  @override
+  Stream<bool> get onStatusChange => const Stream<bool>.empty();
+
+  @override
+  Future<bool> isConnected() async => true;
 }
