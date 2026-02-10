@@ -124,13 +124,13 @@
 - [x] 11.6 — Write unit tests for attachment state machine
 - [x] 11.7 — Commit
 
-## Phase 12: Settings + Polish
+## Phase 12: Settings + Polish ✅
 
-- [ ] 12.1 — Build settings screen: profile info, sign out, theme toggle (light/dark)
-- [ ] 12.2 — Persist theme preference locally
-- [ ] 12.3 — Add structured logging (debug only, no PII)
-- [ ] 12.4 — Final UI polish pass: consistent spacing, transitions, edge cases
-- [ ] 12.5 — Commit
+- [x] 12.1 — Build settings screen: profile info, sign out, theme toggle (light/dark)
+- [x] 12.2 — Persist theme preference locally
+- [x] 12.3 — Add structured logging (debug only, no PII)
+- [x] 12.4 — Final UI polish pass: consistent spacing, transitions, edge cases
+- [x] 12.5 — Commit
 
 ## Phase 13: Integration Tests + CI
 
@@ -143,7 +143,7 @@
 
 ## Status
 
-**Current phase:** 11 — Attachments (Complete, 100%)
+**Current phase:** 12 — Settings + Polish (Complete, 100%)
 **Last updated:** 2026-02-11
-**Test count:** 388 passing, 5 pre-existing failures (router_test.dart)
-**Progress:** Phase 11 complete! All attachment features implemented and tested.
+**Test count:** ~395 passing, 5 pre-existing failures (router_test.dart)
+**Progress:** Phase 12 complete! Settings screen, theme persistence, and structured logging implemented. Ready for Phase 13 (Integration Tests + CI).
