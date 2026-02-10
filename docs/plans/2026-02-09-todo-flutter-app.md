@@ -120,9 +120,9 @@
 - [x] 11.2 — Implement upload to Firebase Storage (`users/{uid}/attachments/`)
 - [x] 11.3 — Store attachment metadata in Firestore + local DB
 - [x] 11.4 — Handle offline: queue upload, show "pending" status
-- [~] 11.5 — Display attachments on task detail (thumbnail/link)
+- [x] 11.5 — Display attachments on task detail (thumbnail/link)
 - [x] 11.6 — Write unit tests for attachment state machine
-- [ ] 11.7 — Commit
+- [x] 11.7 — Commit
 
 ## Phase 12: Settings + Polish
 
@@ -143,7 +143,7 @@
 
 ## Status
 
-**Current phase:** 11 — Attachments (In Progress, Phase 11.5 ~60%)
+**Current phase:** 11 — Attachments (Complete, 100%)
 **Last updated:** 2026-02-11
-**Test count:** 390+ (was 378, +12 from 11.3, +15 from 11.5 widgets)
-**Progress:** Phase 11.5 — 3 widgets created (AttachmentTile, AttachmentListSection, AddAttachmentButton); remaining: integrate into TaskDetailScreen
+**Test count:** 388 passing, 5 pre-existing failures (router_test.dart)
+**Progress:** Phase 11 complete! All attachment features implemented and tested.
