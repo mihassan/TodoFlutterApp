@@ -103,16 +103,16 @@
 - [x] 9.6 — Write unit tests with fake clock + mocked cloud data source
 - [x] 9.7 — Commit
 
-## Phase 10: Task UI (Full Feature)
+## Phase 10: Task UI (Full Feature) ✅
 
 - [x] 10.1 — Build task list screen with filters (Inbox/Today/Upcoming/Completed)
-- [ ] 10.2 — Build task creation bottom sheet
-- [ ] 10.3 — Build task detail/edit screen
-- [ ] 10.4 — Add swipe actions (complete/delete)
+- [x] 10.2 — Build task creation bottom sheet
+- [x] 10.3 — Build task detail/edit screen
+- [x] 10.4 — Add swipe actions (complete/delete)
 - [x] 10.5 — Handle all 4 states per screen: loading, empty, error, populated
-- [ ] 10.6 — Add accessibility: Semantics labels, 48dp tap targets, dynamic text
-- [ ] 10.7 — Write widget tests for key flows
-- [ ] 10.8 — Commit
+- [x] 10.6 — Add accessibility: Semantics labels, 48dp tap targets, dynamic text
+- [x] 10.7 — Write widget tests for key flows
+- [x] 10.8 — Commit
 
 ## Phase 11: Attachments
 

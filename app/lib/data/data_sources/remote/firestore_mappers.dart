@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:todo_flutter_app/domain/entities/attachment.dart' as domain;
 import 'package:todo_flutter_app/domain/entities/priority.dart';
 import 'package:todo_flutter_app/domain/entities/task.dart' as domain;
 import 'package:todo_flutter_app/domain/entities/task_list.dart' as domain;
@@ -75,6 +76,42 @@ Map<String, dynamic> taskListToFirestore(domain.TaskList list) {
   };
 }
 
+// ── Attachment ───────────────────────────────────────────
+
+/// Converts a Firestore document snapshot to a domain [Attachment].
+///
+/// The document ID is used as the attachment ID.
+domain.Attachment attachmentFromFirestore(
+  DocumentSnapshot<Map<String, dynamic>> doc,
+) {
+  final data = doc.data()!;
+  return domain.Attachment(
+    id: doc.id,
+    taskId: data['taskId'] as String,
+    fileName: data['fileName'] as String,
+    mimeType: data['mimeType'] as String,
+    sizeBytes: (data['sizeBytes'] as num).toInt(),
+    localPath: data['localPath'] as String,
+    remoteUrl: data['remoteUrl'] as String?,
+    status: _parseAttachmentStatus(data['status'] as String?),
+    createdAt: (data['createdAt'] as Timestamp).toDate().toUtc(),
+  );
+}
+
+/// Converts a domain [Attachment] to a Firestore-compatible map.
+Map<String, dynamic> attachmentToFirestore(domain.Attachment attachment) {
+  return {
+    'taskId': attachment.taskId,
+    'fileName': attachment.fileName,
+    'mimeType': attachment.mimeType,
+    'sizeBytes': attachment.sizeBytes,
+    'localPath': attachment.localPath,
+    'remoteUrl': attachment.remoteUrl,
+    'status': attachment.status.name,
+    'createdAt': Timestamp.fromDate(attachment.createdAt),
+  };
+}
+
 // ── Helpers ──────────────────────────────────────────────
 
 Priority _parsePriority(String? value) {
@@ -82,5 +119,13 @@ Priority _parsePriority(String? value) {
   return Priority.values.firstWhere(
     (p) => p.name == value,
     orElse: () => Priority.none,
+  );
+}
+
+domain.AttachmentStatus _parseAttachmentStatus(String? value) {
+  if (value == null) return domain.AttachmentStatus.pending;
+  return domain.AttachmentStatus.values.firstWhere(
+    (s) => s.name == value,
+    orElse: () => domain.AttachmentStatus.pending,
   );
 }
