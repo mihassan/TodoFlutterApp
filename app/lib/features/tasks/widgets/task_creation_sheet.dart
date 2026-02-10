@@ -133,26 +133,47 @@ class _TaskCreationSheetState extends ConsumerState<TaskCreationSheet> {
             Row(
               children: [
                 Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: creationState.isLoading ? null : _selectDueDate,
-                    icon: const Icon(Icons.calendar_today),
-                    label: Text(
-                      _selectedDueDate == null
-                          ? 'No due date'
-                          : 'Due: ${_formatDate(_selectedDueDate!)}',
+                  child: Semantics(
+                    label: 'Select due date',
+                    button: true,
+                    enabled: !creationState.isLoading,
+                    onTap: creationState.isLoading ? null : _selectDueDate,
+                    child: OutlinedButton.icon(
+                      onPressed: creationState.isLoading
+                          ? null
+                          : _selectDueDate,
+                      icon: const Icon(Icons.calendar_today),
+                      label: Text(
+                        _selectedDueDate == null
+                            ? 'No due date'
+                            : 'Due: ${_formatDate(_selectedDueDate!)}',
+                      ),
                     ),
                   ),
                 ),
                 if (_selectedDueDate != null)
-                  IconButton(
-                    icon: const Icon(Icons.clear),
-                    onPressed: creationState.isLoading
+                  Semantics(
+                    label: 'Clear due date',
+                    button: true,
+                    enabled: !creationState.isLoading,
+                    onTap: creationState.isLoading
                         ? null
                         : () {
                             setState(() {
                               _selectedDueDate = null;
                             });
                           },
+                    child: IconButton(
+                      icon: const Icon(Icons.clear),
+                      tooltip: 'Clear due date',
+                      onPressed: creationState.isLoading
+                          ? null
+                          : () {
+                              setState(() {
+                                _selectedDueDate = null;
+                              });
+                            },
+                    ),
                   ),
               ],
             ),
@@ -192,15 +213,21 @@ class _TaskCreationSheetState extends ConsumerState<TaskCreationSheet> {
             ),
             const SizedBox(height: 20),
             // Submit button
-            ElevatedButton(
-              onPressed: creationState.isLoading ? null : _submitTask,
-              child: creationState.isLoading
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Text('Create Task'),
+            Semantics(
+              label: 'Create new task',
+              button: true,
+              enabled: !creationState.isLoading,
+              onTap: creationState.isLoading ? null : _submitTask,
+              child: ElevatedButton(
+                onPressed: creationState.isLoading ? null : _submitTask,
+                child: creationState.isLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text('Create Task'),
+              ),
             ),
           ],
         ),

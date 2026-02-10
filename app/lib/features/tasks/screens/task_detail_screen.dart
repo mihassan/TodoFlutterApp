@@ -143,9 +143,16 @@ class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> {
         title: const Text('Task Details'),
         actions: [
           if (editState.task != null)
-            IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: editState.isSaving ? null : _deleteTask,
+            Semantics(
+              label: 'Delete task',
+              button: true,
+              enabled: !editState.isSaving,
+              onTap: editState.isSaving ? null : _deleteTask,
+              child: IconButton(
+                icon: const Icon(Icons.delete),
+                tooltip: 'Delete task',
+                onPressed: editState.isSaving ? null : _deleteTask,
+              ),
             ),
         ],
       ),
@@ -168,18 +175,23 @@ class _TaskDetailScreenState extends ConsumerState<TaskDetailScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // Completion checkbox
-                  CheckboxListTile(
-                    title: const Text('Completed'),
-                    value: editState.task?.isCompleted ?? false,
-                    onChanged: editState.isSaving
-                        ? null
-                        : (value) {
-                            if (value != null) {
-                              ref
-                                  .read(taskEditControllerProvider.notifier)
-                                  .updateTask(isCompleted: value);
-                            }
-                          },
+                  Semantics(
+                    label: 'Toggle task completion',
+                    button: true,
+                    enabled: !editState.isSaving,
+                    child: CheckboxListTile(
+                      title: const Text('Completed'),
+                      value: editState.task?.isCompleted ?? false,
+                      onChanged: editState.isSaving
+                          ? null
+                          : (value) {
+                              if (value != null) {
+                                ref
+                                    .read(taskEditControllerProvider.notifier)
+                                    .updateTask(isCompleted: value);
+                              }
+                            },
+                    ),
                   ),
                   const Divider(),
                   const SizedBox(height: 16),

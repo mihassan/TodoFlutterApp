@@ -225,42 +225,61 @@ class _PopulatedState extends ConsumerWidget {
               child: const Icon(Icons.delete, color: Colors.white),
             ),
             child: Card(
-              child: ListTile(
-                title: Text(
-                  task.title,
-                  style: task.isCompleted
-                      ? TextStyle(
-                          decoration: TextDecoration.lineThrough,
-                          color: Theme.of(context).textTheme.bodyMedium?.color,
-                        )
-                      : null,
-                ),
-                subtitle: task.notes != null && task.notes!.isNotEmpty
-                    ? Text(
-                        task.notes!,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      )
-                    : null,
-                trailing: Checkbox(
-                  value: task.isCompleted,
-                  onChanged: (value) {
-                    if (value != null) {
-                      ref
-                          .read(taskEditControllerProvider.notifier)
-                          .loadTask(task.id)
-                          .then((_) {
-                            ref
-                                .read(taskEditControllerProvider.notifier)
-                                .updateTask(isCompleted: value);
-                            ref.invalidate(allTasksProvider);
-                          });
-                    }
-                  },
-                ),
+              child: Semantics(
+                label:
+                    'Task: ${task.title}${task.isCompleted ? ", completed" : ""}',
+                button: true,
+                enabled: true,
                 onTap: () {
                   context.push(AppRoutes.taskDetailPath(task.id));
                 },
+                child: ListTile(
+                  title: Text(
+                    task.title,
+                    style: task.isCompleted
+                        ? TextStyle(
+                            decoration: TextDecoration.lineThrough,
+                            color: Theme.of(
+                              context,
+                            ).textTheme.bodyMedium?.color,
+                          )
+                        : null,
+                  ),
+                  subtitle: task.notes != null && task.notes!.isNotEmpty
+                      ? Text(
+                          task.notes!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        )
+                      : null,
+                  trailing: Semantics(
+                    label: task.isCompleted
+                        ? 'Mark incomplete'
+                        : 'Mark complete',
+                    button: true,
+                    enabled: true,
+                    child: Checkbox(
+                      value: task.isCompleted,
+                      onChanged: (value) {
+                        if (value != null) {
+                          ref
+                              .read(taskEditControllerProvider.notifier)
+                              .loadTask(task.id)
+                              .then((_) {
+                                ref
+                                    .read(taskEditControllerProvider.notifier)
+                                    .updateTask(isCompleted: value);
+                                ref.invalidate(allTasksProvider);
+                              });
+                        }
+                      },
+                    ),
+                  ),
+                  onTap: () {
+                    context.push(AppRoutes.taskDetailPath(task.id));
+                  },
+                  minVerticalPadding: 12,
+                ),
               ),
             ),
           ),
