@@ -7,8 +7,11 @@ import 'package:todo_flutter_app/app/providers/task_providers.dart';
 import 'package:todo_flutter_app/data/repositories/fake_task_repository.dart';
 import 'package:todo_flutter_app/data/services/connectivity_service.dart';
 import 'package:todo_flutter_app/data/repositories/fake_auth_repository.dart';
+import 'package:todo_flutter_app/data/repositories/fake_attachment_repository.dart';
 import 'package:todo_flutter_app/domain/entities/task.dart';
+import 'package:todo_flutter_app/domain/entities/user.dart';
 import 'package:todo_flutter_app/features/auth/providers/auth_provider.dart';
+import 'package:todo_flutter_app/app/providers/attachment_providers.dart';
 
 /// Wraps [child] in a [MaterialApp] with the app's light theme.
 ///
@@ -52,6 +55,16 @@ List<Override> fakeAuthOverrides({FakeAuthRepository? repository}) {
   return [authRepositoryProvider.overrideWithValue(repo)];
 }
 
+User _testUser() {
+  final now = DateTime.utc(2024, 1, 1);
+  return User(
+    uid: 'test-user',
+    email: 'test@example.com',
+    createdAt: now,
+    updatedAt: now,
+  );
+}
+
 /// Provider overrides to simulate an authenticated state without Firebase.
 ///
 /// Uses [isAuthenticatedProvider] override (for the router) plus
@@ -59,8 +72,11 @@ List<Override> fakeAuthOverrides({FakeAuthRepository? repository}) {
 /// from screens that watch [authControllerProvider]).
 List<Override> authenticatedOverrides() {
   return [
-    ...fakeAuthOverrides(),
+    ...fakeAuthOverrides(
+      repository: FakeAuthRepository(currentUser: _testUser()),
+    ),
     isAuthenticatedProvider.overrideWith((_) => true),
+    attachmentRepositoryProvider.overrideWithValue(FakeAttachmentRepository()),
     taskRepositoryProvider.overrideWithValue(FakeTaskRepository()),
     connectivityServiceProvider.overrideWithValue(
       _AlwaysConnectedConnectivityService(),
@@ -73,8 +89,11 @@ List<Override> authenticatedOverrides() {
 /// Useful for testing screens that display existing task data.
 List<Override> authenticatedOverridesWith({List<Task>? initialTasks}) {
   return [
-    ...fakeAuthOverrides(),
+    ...fakeAuthOverrides(
+      repository: FakeAuthRepository(currentUser: _testUser()),
+    ),
     isAuthenticatedProvider.overrideWith((_) => true),
+    attachmentRepositoryProvider.overrideWithValue(FakeAttachmentRepository()),
     taskRepositoryProvider.overrideWithValue(
       FakeTaskRepository(tasks: initialTasks),
     ),

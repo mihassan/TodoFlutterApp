@@ -134,8 +134,8 @@
 
 ## Phase 13: Integration Tests + CI
 
-- [ ] 13.1 — Write integration tests: sign up → create task → sync → restart → verify persisted
-- [ ] 13.2 — Set up GitHub Actions workflow: `pub get` → `format` → `analyze` → `test`
+- [x] 13.1 — Write integration tests: sign up → create task → sync → restart → verify persisted
+- [x] 13.2 — Set up GitHub Actions workflow: `pub get` → `format` → `analyze` → `test`
 - [ ] 13.3 — Verify CI passes on push
 - [ ] 13.4 — Commit
 
@@ -143,7 +143,7 @@
 
 ## Status
 
-**Current phase:** 12 — Settings + Polish (Complete, 100%)
+**Current phase:** 13 — Integration Tests + CI (In progress)
 **Last updated:** 2026-02-11
 **Test count:** ~395 passing, 5 pre-existing failures (router_test.dart)
-**Progress:** Phase 12 complete! Settings screen, theme persistence, and structured logging implemented. Ready for Phase 13 (Integration Tests + CI).
+**Progress:** Integration tests added and CI workflow created. Pending: verify CI on push and commit.

@@ -53,6 +53,8 @@ dev_dependencies:
   drift_dev: ^2.25.0
 
   # Testing
+  integration_test:
+    sdk: flutter
   mocktail: ^1.0.4
   firebase_auth_mocks: ^0.15.1
   google_sign_in_mocks: ^0.3.0

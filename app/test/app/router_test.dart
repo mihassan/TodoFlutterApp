@@ -107,7 +107,7 @@ void main() {
 
       expect(find.text('Profile'), findsOneWidget);
       expect(find.text('Theme'), findsOneWidget);
-      expect(find.text('Sign out'), findsOneWidget);
+      expect(find.text('Sign Out'), findsOneWidget);
 
       container.dispose();
     });

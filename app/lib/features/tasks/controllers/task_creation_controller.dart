@@ -35,11 +35,10 @@ class TaskCreationState {
 ///
 /// Handles validation and persistence of new tasks.
 class TaskCreationController extends StateNotifier<TaskCreationState> {
-  TaskCreationController({
-    required TaskRepository repository,
-  }) : _repository = repository,
-       _createTaskUseCase = const CreateTask(),
-       super(const TaskCreationState());
+  TaskCreationController({required TaskRepository repository})
+    : _repository = repository,
+      _createTaskUseCase = const CreateTask(),
+      super(const TaskCreationState());
 
   final TaskRepository _repository;
   final CreateTask _createTaskUseCase;
@@ -65,10 +64,7 @@ class TaskCreationController extends StateNotifier<TaskCreationState> {
 
     // Check if validation failed
     if (result is AppFailure) {
-      state = state.copyWith(
-        isLoading: false,
-        error: result,
-      );
+      state = state.copyWith(isLoading: false, error: result);
       return false;
     }
 
@@ -79,17 +75,11 @@ class TaskCreationController extends StateNotifier<TaskCreationState> {
     final (_, failure) = await _repository.createTask(newTask);
 
     if (failure != null) {
-      state = state.copyWith(
-        isLoading: false,
-        error: failure,
-      );
+      state = state.copyWith(isLoading: false, error: failure);
       return false;
     }
 
-    state = state.copyWith(
-      isLoading: false,
-      success: true,
-    );
+    state = state.copyWith(isLoading: false, success: true);
     return true;
   }
 
