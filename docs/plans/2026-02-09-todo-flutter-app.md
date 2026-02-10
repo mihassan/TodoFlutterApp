@@ -97,19 +97,19 @@
 
 - [x] 9.1 — Implement sync queue processor: read dirty records → push to Firestore → mark clean
 - [x] 9.2 — Implement pull sync: fetch remote changes → merge into local DB (last-write-wins)
-- [~] 9.3 — Trigger sync on: app start, pull-to-refresh, network regain
+- [x] 9.3 — Trigger sync on: app start, pull-to-refresh, network regain
 - [x] 9.4 — Add retry with backoff for failed syncs
 - [x] 9.5 — Surface sync status in UI (syncing/synced/error indicator)
 - [x] 9.6 — Write unit tests with fake clock + mocked cloud data source
-- [ ] 9.7 — Commit
+- [x] 9.7 — Commit
 
 ## Phase 10: Task UI (Full Feature)
 
-- [ ] 10.1 — Build task list screen with filters (Inbox/Today/Upcoming/Completed)
+- [x] 10.1 — Build task list screen with filters (Inbox/Today/Upcoming/Completed)
 - [ ] 10.2 — Build task creation bottom sheet
 - [ ] 10.3 — Build task detail/edit screen
 - [ ] 10.4 — Add swipe actions (complete/delete)
-- [ ] 10.5 — Handle all 4 states per screen: loading, empty, error, populated
+- [x] 10.5 — Handle all 4 states per screen: loading, empty, error, populated
 - [ ] 10.6 — Add accessibility: Semantics labels, 48dp tap targets, dynamic text
 - [ ] 10.7 — Write widget tests for key flows
 - [ ] 10.8 — Commit
@@ -143,5 +143,5 @@
 
 ## Status
 
-**Current phase:** 9 — Sync Engine
+**Current phase:** 10 — Task UI (Full Feature)
 **Last updated:** 2026-02-11

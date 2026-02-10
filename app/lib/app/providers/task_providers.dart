@@ -19,6 +19,7 @@ import 'package:todo_flutter_app/domain/use_cases/filter_tasks.dart'
     show FilterTasks, TaskFilter;
 import 'package:todo_flutter_app/features/auth/providers/auth_provider.dart';
 import 'package:todo_flutter_app/features/tasks/controllers/sync_controller.dart';
+import 'package:todo_flutter_app/features/tasks/controllers/task_creation_controller.dart';
 
 final appDatabaseProvider = Provider<AppDatabase>((ref) {
   final executor = LazyDatabase(() async {
@@ -114,3 +115,13 @@ final filteredTasksProvider = Provider<AsyncValue<List<Task>>>((ref) {
     return filterUseCase(tasks, filter);
   });
 });
+
+/// Provider for the task creation controller.
+///
+/// Manages state for task creation operations (validation, persistence).
+final taskCreationControllerProvider =
+    StateNotifierProvider<TaskCreationController, TaskCreationState>((ref) {
+      return TaskCreationController(
+        repository: ref.watch(taskRepositoryProvider),
+      );
+    });

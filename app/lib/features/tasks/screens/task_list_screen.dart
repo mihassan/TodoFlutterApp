@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo_flutter_app/app/providers/task_providers.dart';
 import 'package:todo_flutter_app/core/widgets/empty_state.dart';
 import 'package:todo_flutter_app/domain/use_cases/filter_tasks.dart';
+import 'package:todo_flutter_app/features/tasks/widgets/task_creation_sheet.dart';
 
 /// Task list screen with pull-to-refresh and filters.
 ///
@@ -69,7 +70,14 @@ class TaskListScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // TODO: Open task creation bottom sheet
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+            ),
+            builder: (context) => const TaskCreationSheet(),
+          );
         },
         child: const Icon(Icons.add),
       ),
