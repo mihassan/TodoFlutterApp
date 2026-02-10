@@ -45,14 +45,14 @@
 - [x] 3.7 — Run code generation (`build_runner`), verify tests pass
 - [x] 3.8 — Commit
 
-## Phase 4: Data Layer — Repository Contracts
+## Phase 4: Data Layer — Repository Contracts ✅
 
-- [ ] 4.1 — Define `AuthRepository` interface
-- [ ] 4.2 — Define `TaskRepository` interface
-- [ ] 4.3 — Define `AttachmentRepository` interface
-- [ ] 4.4 — Create fake/mock implementations for testing
-- [ ] 4.5 — Write unit tests using fakes
-- [ ] 4.6 — Commit
+- [x] 4.1 — Define `AuthRepository` interface
+- [x] 4.2 — Define `TaskRepository` interface
+- [x] 4.3 — Define `AttachmentRepository` interface
+- [x] 4.4 — Create fake/mock implementations for testing
+- [x] 4.5 — Write unit tests using fakes
+- [x] 4.6 — Commit
 
 ## Phase 5: Local Persistence (Drift)
 
@@ -143,5 +143,5 @@
 
 ## Status
 
-**Current phase:** 4 — Data Layer — Repository Contracts
+**Current phase:** 5 — Local Persistence (Drift)
 **Last updated:** 2026-02-10
