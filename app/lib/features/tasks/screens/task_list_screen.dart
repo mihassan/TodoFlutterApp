@@ -174,28 +174,94 @@ class _PopulatedState extends ConsumerWidget {
         final task = tasks[index];
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          child: Card(
-            child: ListTile(
-              title: Text(task.title),
-              subtitle: task.notes != null ? Text(task.notes!) : null,
-              trailing: Checkbox(
-                value: task.isCompleted,
-                onChanged: (value) {
-                  if (value != null) {
-                    ref
-                        .read(taskEditControllerProvider.notifier)
-                        .loadTask(task.id)
-                        .then((_) {
-                          ref
-                              .read(taskEditControllerProvider.notifier)
-                              .updateTask(isCompleted: value);
-                        });
-                  }
+          child: Dismissible(
+            key: ValueKey(task.id),
+            direction: DismissDirection.horizontal,
+            onDismissed: (direction) async {
+              final controller = ref.read(taskEditControllerProvider.notifier);
+              if (direction == DismissDirection.startToEnd) {
+                // Swipe left to right: Toggle completion
+                await controller.loadTask(task.id);
+                await controller.updateTask(isCompleted: !task.isCompleted);
+                ref.invalidate(allTasksProvider);
+              } else if (direction == DismissDirection.endToStart) {
+                // Swipe right to left: Delete
+                final confirmed = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Delete Task'),
+                    content: const Text(
+                      'Are you sure you want to delete this task?',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: const Text('Delete'),
+                      ),
+                    ],
+                  ),
+                );
+
+                if (confirmed == true) {
+                  await controller.deleteTask();
+                  ref.invalidate(allTasksProvider);
+                }
+              }
+            },
+            background: Container(
+              color: Colors.green,
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.only(left: 16),
+              child: const Icon(Icons.check, color: Colors.white),
+            ),
+            secondaryBackground: Container(
+              color: Colors.red,
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.only(right: 16),
+              child: const Icon(Icons.delete, color: Colors.white),
+            ),
+            child: Card(
+              child: ListTile(
+                title: Text(
+                  task.title,
+                  style: task.isCompleted
+                      ? TextStyle(
+                          decoration: TextDecoration.lineThrough,
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
+                        )
+                      : null,
+                ),
+                subtitle: task.notes != null && task.notes!.isNotEmpty
+                    ? Text(
+                        task.notes!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      )
+                    : null,
+                trailing: Checkbox(
+                  value: task.isCompleted,
+                  onChanged: (value) {
+                    if (value != null) {
+                      ref
+                          .read(taskEditControllerProvider.notifier)
+                          .loadTask(task.id)
+                          .then((_) {
+                            ref
+                                .read(taskEditControllerProvider.notifier)
+                                .updateTask(isCompleted: value);
+                            ref.invalidate(allTasksProvider);
+                          });
+                    }
+                  },
+                ),
+                onTap: () {
+                  context.push(AppRoutes.taskDetailPath(task.id));
                 },
               ),
-              onTap: () {
-                context.push(AppRoutes.taskDetailPath(task.id));
-              },
             ),
           ),
         );
