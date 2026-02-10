@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:todo_flutter_app/app/providers/theme_provider.dart';
 import 'package:todo_flutter_app/app/router.dart';
 import 'package:todo_flutter_app/app/theme.dart';
 import 'package:todo_flutter_app/firebase_options.dart';
@@ -50,13 +51,38 @@ class TodoApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final GoRouter router = ref.watch(routerProvider);
+    final themeModeAsync = ref.watch(themeModeProvider);
 
-    return MaterialApp.router(
-      title: 'Todo',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      routerConfig: router,
+    return themeModeAsync.when(
+      data: (themeMode) {
+        return MaterialApp.router(
+          title: 'Todo',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: themeMode.toFlutterThemeMode(),
+          routerConfig: router,
+        );
+      },
+      loading: () {
+        // Show a loading screen while theme preference loads
+        return MaterialApp(
+          home: Scaffold(
+            body: Center(child: const CircularProgressIndicator()),
+          ),
+        );
+      },
+      error: (error, stackTrace) {
+        // Fall back to system theme on error
+        return MaterialApp.router(
+          title: 'Todo',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: ThemeMode.system,
+          routerConfig: router,
+        );
+      },
     );
   }
 }
