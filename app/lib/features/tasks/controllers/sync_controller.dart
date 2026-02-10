@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:todo_flutter_app/core/failures.dart';
 import 'package:todo_flutter_app/data/services/connectivity_service.dart';
+import 'package:todo_flutter_app/domain/repositories/attachment_repository.dart';
 import 'package:todo_flutter_app/domain/repositories/task_repository.dart';
 
 enum SyncPhase { idle, syncing, success, error }
@@ -39,12 +40,14 @@ class SyncStatus {
 class SyncController extends StateNotifier<SyncStatus> {
   SyncController({
     required TaskRepository repository,
+    required AttachmentRepository attachmentRepository,
     required ConnectivityService connectivityService,
     Duration baseBackoff = const Duration(seconds: 1),
     Duration maxBackoff = const Duration(seconds: 30),
     int maxRetries = 3,
     Future<void> Function(Duration delay) delay = Future<void>.delayed,
   }) : _repository = repository,
+       _attachmentRepository = attachmentRepository,
        _connectivityService = connectivityService,
        _baseBackoff = baseBackoff,
        _maxBackoff = maxBackoff,
@@ -53,6 +56,7 @@ class SyncController extends StateNotifier<SyncStatus> {
        super(const SyncStatus.idle());
 
   final TaskRepository _repository;
+  final AttachmentRepository _attachmentRepository;
   final ConnectivityService _connectivityService;
   final Duration _baseBackoff;
   final Duration _maxBackoff;
@@ -94,14 +98,26 @@ class SyncController extends StateNotifier<SyncStatus> {
 
     NetworkFailure? failure;
     for (var attempt = 0; attempt <= _maxRetries; attempt++) {
-      failure = await _repository.sync();
-      if (failure == null) {
+      try {
+        // Sync tasks first (highest priority)
+        failure = await _repository.sync();
+        if (failure != null) {
+          if (attempt < _maxRetries) {
+            await _delay(_nextBackoff(attempt));
+          }
+          continue;
+        }
+
+        // Then sync attachment uploads (fire-and-forget, don't propagate errors)
+        await _attachmentRepository.syncUploads();
+
         state = SyncStatus.success(lastSyncedAt: DateTime.now().toUtc());
         return;
-      }
-
-      if (attempt < _maxRetries) {
-        await _delay(_nextBackoff(attempt));
+      } catch (e) {
+        failure = ServerError('Sync failed: $e');
+        if (attempt < _maxRetries) {
+          await _delay(_nextBackoff(attempt));
+        }
       }
     }
 

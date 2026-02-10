@@ -18,6 +18,7 @@ import 'package:todo_flutter_app/domain/repositories/task_repository.dart';
 import 'package:todo_flutter_app/domain/use_cases/filter_tasks.dart'
     show FilterTasks, TaskFilter;
 import 'package:todo_flutter_app/features/auth/providers/auth_provider.dart';
+import 'attachment_providers.dart';
 import 'package:todo_flutter_app/features/tasks/controllers/sync_controller.dart';
 import 'package:todo_flutter_app/features/tasks/controllers/task_creation_controller.dart';
 import 'package:todo_flutter_app/features/tasks/controllers/task_edit_controller.dart';
@@ -74,6 +75,7 @@ final syncControllerProvider =
     StateNotifierProvider<SyncController, SyncStatus>((ref) {
       final controller = SyncController(
         repository: ref.watch(taskRepositoryProvider),
+        attachmentRepository: ref.watch(attachmentRepositoryProvider),
         connectivityService: ref.watch(connectivityServiceProvider),
       );
 

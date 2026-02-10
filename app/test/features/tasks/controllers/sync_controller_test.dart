@@ -5,26 +5,36 @@ import 'package:mocktail/mocktail.dart';
 
 import 'package:todo_flutter_app/core/failures.dart';
 import 'package:todo_flutter_app/data/services/connectivity_service.dart';
+import 'package:todo_flutter_app/domain/repositories/attachment_repository.dart';
 import 'package:todo_flutter_app/domain/repositories/task_repository.dart';
 import 'package:todo_flutter_app/features/tasks/controllers/sync_controller.dart';
 
 class MockTaskRepository extends Mock implements TaskRepository {}
 
+class MockAttachmentRepository extends Mock implements AttachmentRepository {}
+
 class MockConnectivityService extends Mock implements ConnectivityService {}
 
 void main() {
   late MockTaskRepository repository;
+  late MockAttachmentRepository attachmentRepository;
   late MockConnectivityService connectivityService;
   late StreamController<bool> connectivityStream;
 
   setUp(() {
     repository = MockTaskRepository();
+    attachmentRepository = MockAttachmentRepository();
     connectivityService = MockConnectivityService();
     connectivityStream = StreamController<bool>.broadcast();
 
     when(
       () => connectivityService.onStatusChange,
     ).thenAnswer((_) => connectivityStream.stream);
+
+    // Set up attachment repository mock to return null (no error)
+    when(
+      () => attachmentRepository.syncUploads(),
+    ).thenAnswer((_) async => null);
   });
 
   tearDown(() async {
@@ -40,6 +50,7 @@ void main() {
 
       final controller = SyncController(
         repository: repository,
+        attachmentRepository: attachmentRepository,
         connectivityService: connectivityService,
       );
       addTearDown(controller.dispose);
@@ -47,6 +58,7 @@ void main() {
       await controller.start();
 
       verify(() => repository.sync()).called(1);
+      verify(() => attachmentRepository.syncUploads()).called(1);
       expect(controller.state.phase, SyncPhase.success);
     });
 
@@ -59,6 +71,7 @@ void main() {
 
       final controller = SyncController(
         repository: repository,
+        attachmentRepository: attachmentRepository,
         connectivityService: connectivityService,
       );
       addTearDown(controller.dispose);
@@ -69,6 +82,7 @@ void main() {
       await Future<void>.delayed(Duration.zero);
 
       verify(() => repository.sync()).called(1);
+      verify(() => attachmentRepository.syncUploads()).called(1);
     });
 
     test('triggerSync retries with exponential backoff', () async {
@@ -82,6 +96,7 @@ void main() {
       final delays = <Duration>[];
       final controller = SyncController(
         repository: repository,
+        attachmentRepository: attachmentRepository,
         connectivityService: connectivityService,
         maxRetries: 2,
         delay: (delay) async => delays.add(delay),
@@ -102,6 +117,7 @@ void main() {
 
       final controller = SyncController(
         repository: repository,
+        attachmentRepository: attachmentRepository,
         connectivityService: connectivityService,
       );
       addTearDown(controller.dispose);
@@ -111,6 +127,7 @@ void main() {
       expect(controller.state.phase, SyncPhase.error);
       expect(controller.state.failure, isA<NoConnection>());
       verifyNever(() => repository.sync());
+      verifyNever(() => attachmentRepository.syncUploads());
     });
   });
 }
