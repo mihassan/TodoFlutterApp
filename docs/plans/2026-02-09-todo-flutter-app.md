@@ -73,15 +73,15 @@
 - [x] 6.6 — Verify: sign in + read/write Firestore on emulators (deferred to Phase 7 — needs auth UI)
 - [x] 6.7 — Commit
 
-## Phase 7: Authentication
+## Phase 7: Authentication ✅
 
-- [ ] 7.1 — Implement `FirebaseAuthDataSource` (email/password sign up/in, Google sign-in, sign out)
-- [ ] 7.2 — Implement `AuthRepositoryImpl` wrapping data source, mapping exceptions to `AuthFailure`
-- [ ] 7.3 — Create Riverpod providers: `authStateProvider`, `currentUserProvider`
-- [ ] 7.4 — Build auth screens: sign in, sign up, password reset
-- [ ] 7.5 — Wire go_router auth guard to real auth state
-- [ ] 7.6 — Write unit tests (mocked auth) + widget tests (form validation, error states)
-- [ ] 7.7 — Commit
+- [x] 7.1 — Implement `FirebaseAuthDataSource` (email/password sign up/in, Google sign-in, sign out)
+- [x] 7.2 — Implement `AuthRepositoryImpl` wrapping data source, mapping exceptions to `AuthFailure`
+- [x] 7.3 — Create Riverpod providers: `authStateProvider`, `currentUserProvider`
+- [x] 7.4 — Build auth screens: sign in, sign up, password reset
+- [x] 7.5 — Wire go_router auth guard to real auth state
+- [x] 7.6 — Write unit tests (mocked auth) + widget tests (form validation, error states)
+- [x] 7.7 — Commit
 
 ## Phase 8: Cloud Data + Security Rules
 
@@ -143,5 +143,5 @@
 
 ## Status
 
-**Current phase:** 7 — Authentication
+**Current phase:** 8 — Cloud Data + Security Rules
 **Last updated:** 2026-02-10

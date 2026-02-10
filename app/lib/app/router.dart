@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 
 import 'package:todo_flutter_app/app/routes.dart';
 import 'package:todo_flutter_app/features/auth/providers/auth_provider.dart';
+import 'package:todo_flutter_app/features/auth/screens/forgot_password_screen.dart';
 import 'package:todo_flutter_app/features/auth/screens/sign_in_screen.dart';
+import 'package:todo_flutter_app/features/auth/screens/sign_up_screen.dart';
 import 'package:todo_flutter_app/features/settings/screens/settings_screen.dart';
 import 'package:todo_flutter_app/features/tasks/screens/task_detail_screen.dart';
 import 'package:todo_flutter_app/features/tasks/screens/task_list_screen.dart';
@@ -27,12 +29,16 @@ final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: AppRoutes.tasks,
     redirect: (context, state) {
-      final goingToSignIn = state.matchedLocation == AppRoutes.signIn;
+      final location = state.matchedLocation;
+      final isAuthRoute =
+          location == AppRoutes.signIn ||
+          location == AppRoutes.signUp ||
+          location == AppRoutes.forgotPassword;
 
-      if (!isAuthenticated && !goingToSignIn) {
+      if (!isAuthenticated && !isAuthRoute) {
         return AppRoutes.signIn;
       }
-      if (isAuthenticated && goingToSignIn) {
+      if (isAuthenticated && isAuthRoute) {
         return AppRoutes.tasks;
       }
       return null;
@@ -41,6 +47,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.signIn,
         builder: (context, state) => const SignInScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.signUp,
+        builder: (context, state) => const SignUpScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.forgotPassword,
+        builder: (context, state) => const ForgotPasswordScreen(),
       ),
       ShellRoute(
         builder: (context, state, child) => _AppShell(child: child),

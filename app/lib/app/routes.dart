@@ -3,6 +3,8 @@
 /// Centralised here so paths are never duplicated as string literals.
 abstract final class AppRoutes {
   static const signIn = '/sign-in';
+  static const signUp = '/sign-up';
+  static const forgotPassword = '/forgot-password';
   static const tasks = '/tasks';
   static const taskDetail = '/tasks/:taskId';
   static const settings = '/settings';

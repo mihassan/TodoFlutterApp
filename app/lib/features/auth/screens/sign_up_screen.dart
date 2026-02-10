@@ -2,50 +2,47 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:todo_flutter_app/app/routes.dart';
 import 'package:todo_flutter_app/app/spacing.dart';
 import 'package:todo_flutter_app/core/widgets/app_button.dart';
 import 'package:todo_flutter_app/core/widgets/app_text_field.dart';
 import 'package:todo_flutter_app/core/widgets/error_banner.dart';
 import 'package:todo_flutter_app/features/auth/controllers/auth_controller.dart';
 
-/// Sign-in screen with email/password and Google Sign-In.
+/// Sign-up screen with email and password fields.
 ///
-/// Navigates to the task list on successful authentication.
-/// Links to sign-up and forgot-password screens.
-class SignInScreen extends ConsumerStatefulWidget {
-  const SignInScreen({super.key});
+/// Navigates back to sign-in (then auth guard redirects to tasks)
+/// on successful account creation.
+class SignUpScreen extends ConsumerStatefulWidget {
+  const SignUpScreen({super.key});
 
   @override
-  ConsumerState<SignInScreen> createState() => _SignInScreenState();
+  ConsumerState<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _SignInScreenState extends ConsumerState<SignInScreen> {
+class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
-  Future<void> _signIn() async {
+  Future<void> _signUp() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     await ref
         .read(authControllerProvider.notifier)
-        .signInWithEmail(
+        .signUpWithEmail(
           email: _emailController.text.trim(),
           password: _passwordController.text,
         );
     // Navigation is handled by the auth guard in the router.
-  }
-
-  Future<void> _signInWithGoogle() async {
-    await ref.read(authControllerProvider.notifier).signInWithGoogle();
   }
 
   @override
@@ -55,6 +52,13 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: () => context.pop(),
+          icon: const Icon(Icons.arrow_back),
+          tooltip: 'Back',
+        ),
+      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppSpacing.xl),
@@ -67,21 +71,15 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // App icon and title
-                    Icon(
-                      Icons.check_circle_outline,
-                      size: 80,
-                      color: colorScheme.primary,
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
+                    // Title
                     Text(
-                      'Todo',
-                      style: textTheme.headlineLarge,
+                      'Create account',
+                      style: textTheme.headlineMedium,
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     Text(
-                      'Sign in to get started',
+                      'Sign up to start managing your tasks',
                       style: textTheme.bodyLarge?.copyWith(
                         color: colorScheme.onSurfaceVariant,
                       ),
@@ -117,70 +115,42 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                       label: 'Password',
                       controller: _passwordController,
                       obscureText: true,
-                      textInputAction: TextInputAction.done,
-                      onFieldSubmitted: (_) => _signIn(),
+                      textInputAction: TextInputAction.next,
                       validator: _validatePassword,
                     ),
-                    const SizedBox(height: AppSpacing.sm),
-
-                    // Forgot password link
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () => context.push(AppRoutes.forgotPassword),
-                        child: const Text('Forgot password?'),
-                      ),
-                    ),
                     const SizedBox(height: AppSpacing.md),
 
-                    // Sign in button
-                    AppButton(
-                      onPressed: _signIn,
-                      label: 'Sign in',
-                      isLoading: authState.isLoading,
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-
-                    // Divider
-                    Row(
-                      children: [
-                        const Expanded(child: Divider()),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.md,
-                          ),
-                          child: Text(
-                            'or',
-                            style: textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ),
-                        const Expanded(child: Divider()),
-                      ],
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-
-                    // Google sign-in button
-                    OutlinedButton.icon(
-                      onPressed: authState.isLoading ? null : _signInWithGoogle,
-                      icon: const Icon(Icons.g_mobiledata, size: 24),
-                      label: const Text('Continue with Google'),
+                    // Confirm password field
+                    AppTextField(
+                      label: 'Confirm password',
+                      controller: _confirmPasswordController,
+                      obscureText: true,
+                      textInputAction: TextInputAction.done,
+                      onFieldSubmitted: (_) => _signUp(),
+                      validator: _validateConfirmPassword,
                     ),
                     const SizedBox(height: AppSpacing.xl),
 
-                    // Sign up link
+                    // Sign up button
+                    AppButton(
+                      onPressed: _signUp,
+                      label: 'Sign up',
+                      isLoading: authState.isLoading,
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+
+                    // Already have an account? Sign in
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          "Don't have an account? ",
+                          'Already have an account? ',
                           style: textTheme.bodyMedium,
                         ),
                         Flexible(
                           child: TextButton(
-                            onPressed: () => context.push(AppRoutes.signUp),
-                            child: const Text('Sign up'),
+                            onPressed: () => context.pop(),
+                            child: const Text('Sign in'),
                           ),
                         ),
                       ],
@@ -211,6 +181,16 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     }
     if (value.length < 6) {
       return 'Password must be at least 6 characters';
+    }
+    return null;
+  }
+
+  String? _validateConfirmPassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please confirm your password';
+    }
+    if (value != _passwordController.text) {
+      return 'Passwords do not match';
     }
     return null;
   }

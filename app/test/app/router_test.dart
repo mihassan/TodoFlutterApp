@@ -4,7 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:todo_flutter_app/app/router.dart';
 import 'package:todo_flutter_app/app/routes.dart';
-import 'package:todo_flutter_app/features/auth/providers/auth_provider.dart';
 
 import '../helpers/test_app.dart';
 
@@ -13,16 +12,12 @@ void main() {
     testWidgets('redirects unauthenticated user to sign-in screen', (
       tester,
     ) async {
-      final container = ProviderContainer(
-        overrides: [isAuthenticatedProvider.overrideWith((_) => false)],
-      );
+      final overrides = unauthenticatedOverrides();
+      final container = ProviderContainer(overrides: overrides);
       final router = container.read(routerProvider);
 
       await tester.pumpWidget(
-        testRouterApp(
-          router: router,
-          overrides: [isAuthenticatedProvider.overrideWith((_) => false)],
-        ),
+        testRouterApp(router: router, overrides: overrides),
       );
       await tester.pumpAndSettle();
 
@@ -33,16 +28,12 @@ void main() {
     });
 
     testWidgets('shows task list when authenticated', (tester) async {
-      final container = ProviderContainer(
-        overrides: [isAuthenticatedProvider.overrideWith((_) => true)],
-      );
+      final overrides = authenticatedOverrides();
+      final container = ProviderContainer(overrides: overrides);
       final router = container.read(routerProvider);
 
       await tester.pumpWidget(
-        testRouterApp(
-          router: router,
-          overrides: [isAuthenticatedProvider.overrideWith((_) => true)],
-        ),
+        testRouterApp(router: router, overrides: overrides),
       );
       await tester.pumpAndSettle();
 
@@ -56,19 +47,15 @@ void main() {
     testWidgets('redirects authenticated user away from sign-in to tasks', (
       tester,
     ) async {
-      final container = ProviderContainer(
-        overrides: [isAuthenticatedProvider.overrideWith((_) => true)],
-      );
+      final overrides = authenticatedOverrides();
+      final container = ProviderContainer(overrides: overrides);
       final router = container.read(routerProvider);
 
       // Manually navigate to sign-in.
       router.go(AppRoutes.signIn);
 
       await tester.pumpWidget(
-        testRouterApp(
-          router: router,
-          overrides: [isAuthenticatedProvider.overrideWith((_) => true)],
-        ),
+        testRouterApp(router: router, overrides: overrides),
       );
       await tester.pumpAndSettle();
 
@@ -84,16 +71,12 @@ void main() {
     testWidgets('bottom nav shows Tasks and Settings destinations', (
       tester,
     ) async {
-      final container = ProviderContainer(
-        overrides: [isAuthenticatedProvider.overrideWith((_) => true)],
-      );
+      final overrides = authenticatedOverrides();
+      final container = ProviderContainer(overrides: overrides);
       final router = container.read(routerProvider);
 
       await tester.pumpWidget(
-        testRouterApp(
-          router: router,
-          overrides: [isAuthenticatedProvider.overrideWith((_) => true)],
-        ),
+        testRouterApp(router: router, overrides: overrides),
       );
       await tester.pumpAndSettle();
 
@@ -107,16 +90,12 @@ void main() {
     testWidgets('tapping Settings navigates to settings screen', (
       tester,
     ) async {
-      final container = ProviderContainer(
-        overrides: [isAuthenticatedProvider.overrideWith((_) => true)],
-      );
+      final overrides = authenticatedOverrides();
+      final container = ProviderContainer(overrides: overrides);
       final router = container.read(routerProvider);
 
       await tester.pumpWidget(
-        testRouterApp(
-          router: router,
-          overrides: [isAuthenticatedProvider.overrideWith((_) => true)],
-        ),
+        testRouterApp(router: router, overrides: overrides),
       );
       await tester.pumpAndSettle();
 
@@ -132,16 +111,12 @@ void main() {
     });
 
     testWidgets('navigating to task detail shows taskId', (tester) async {
-      final container = ProviderContainer(
-        overrides: [isAuthenticatedProvider.overrideWith((_) => true)],
-      );
+      final overrides = authenticatedOverrides();
+      final container = ProviderContainer(overrides: overrides);
       final router = container.read(routerProvider);
 
       await tester.pumpWidget(
-        testRouterApp(
-          router: router,
-          overrides: [isAuthenticatedProvider.overrideWith((_) => true)],
-        ),
+        testRouterApp(router: router, overrides: overrides),
       );
       await tester.pumpAndSettle();
 

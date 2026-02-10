@@ -31,6 +31,7 @@ dependencies:
   firebase_auth: ^6.1.4
   cloud_firestore: ^6.1.2
   firebase_storage: ^13.0.6
+  google_sign_in: ^6.3.0
 
 dev_dependencies:
   flutter_test:
@@ -47,6 +48,9 @@ dev_dependencies:
 
   # Testing
   mocktail: ^1.0.4
+  firebase_auth_mocks: ^0.15.1
+  google_sign_in_mocks: ^0.3.0
+  mock_exceptions: ^0.8.2
 
 flutter:
   uses-material-design: true
