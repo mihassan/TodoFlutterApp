@@ -1,5 +1,7 @@
 # Todo Flutter App
 
+**Status: [Learning Exercise]**
+
 A Flutter Android todo app with Firebase backend, offline-first sync, and clean architecture — built as a learning project for real-world Android development skills.
 
 ## Features
