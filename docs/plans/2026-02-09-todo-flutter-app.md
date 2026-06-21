@@ -1,5 +1,10 @@
 # Todo Flutter App — Implementation Plan
 
+**State:** In Progress
+**Last updated:** 2026-02-11
+**Scope:** Build and verify an offline-first Flutter Android todo app with Firebase backend.
+**Source of truth:** [Root README](../../README.md) and [AGENTS.md](../../AGENTS.md)
+
 > **For agents:** Check task statuses below before starting work. Pick up the next `[ ]` task in order. Mark `[x]` when done, `[~]` if in progress. Update this file after each task.
 
 **Goal:** Build an offline-first Flutter Android todo app with Firebase backend to learn real-world Android development skills.
@@ -144,6 +149,5 @@
 ## Status
 
 **Current phase:** 13 — Integration Tests + CI (In progress)
-**Last updated:** 2026-02-11
 **Test count:** 398 passing, 0 failures
 **Progress:** Integration tests added and CI workflow created. Pending: verify CI on push and commit.

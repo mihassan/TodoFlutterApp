@@ -1,6 +1,11 @@
 # Dependency Upgrade Implementation Plan
 
-> **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+**State:** Proposed
+**Last updated:** 2026-02-09
+**Scope:** Upgrade Flutter and Dart dependencies while keeping analysis and tests passing.
+**Source of truth:** [Root README](../../README.md) and [AGENTS.md](../../AGENTS.md)
+
+> **For implementers:** Work through this plan task-by-task. Keep changes minimal and verify after each dependency-resolution or breaking-change step.
 
 **Goal:** Upgrade Flutter/Dart dependencies to the latest safe major versions and keep the project building and tests passing.
 

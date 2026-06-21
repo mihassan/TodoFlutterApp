@@ -1,6 +1,11 @@
 # Phase 0 Scaffold Implementation Plan
 
-> **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
+**State:** Done
+**Last updated:** 2026-02-09
+**Scope:** Scaffold the Flutter app structure, linting, dependencies, and git ignore to prepare for feature work.
+**Source of truth:** [Implementation Plan](2026-02-09-todo-flutter-app.md)
+
+> **For implementers:** This plan is historical. Use it as context for how Phase 0 was intended to be built, not as the current active task queue.
 
 **Goal:** Scaffold the Flutter app structure, linting, dependencies, and git ignore to prepare for feature work.
 
