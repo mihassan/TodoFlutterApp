@@ -4,6 +4,14 @@
 
 A Flutter Android todo app with Firebase backend, offline-first sync, and clean architecture — built as a learning project for real-world Android development skills.
 
+## Current Scope
+
+- Android-focused Flutter todo app.
+- Offline-first task storage with Drift and Firestore sync.
+- Firebase Auth with email/password and Google Sign-In.
+- Attachment support through Firebase Storage.
+- CI, unit tests, widget tests, and integration-test coverage for the learning project.
+
 ## Features
 
 - **Task management** — create, edit, complete, delete, and organize tasks into lists
@@ -39,7 +47,7 @@ scripts/          # Dev helper scripts
 .github/          # CI workflows
 ```
 
-## Getting Started
+## Quick Start
 
 ### Prerequisites
 
@@ -102,6 +110,15 @@ dart format .
 flutter analyze
 ```
 
+## Verification
+
+```sh
+cd app
+dart format --set-exit-if-changed .
+flutter analyze
+flutter test
+```
+
 ## Architecture
 
 ```
@@ -114,6 +131,11 @@ UI (Widgets)
 - **Offline-first:** all writes go to local SQLite first, then sync to Firestore
 - **Sync strategy:** last-write-wins with `updatedAt` timestamps
 - **Error boundaries:** raw exceptions are mapped to typed failures (`AuthFailure`, `NetworkFailure`, etc.) at the repository layer — never exposed to UI
+
+## Documentation
+
+- [Implementation Plan](docs/plans/2026-02-09-todo-flutter-app.md)
+- [App README](app/README.md)
 
 ## Contributing
 
